@@ -5,7 +5,7 @@ It is written in TypeScript and currently has a AMD dependency.
 
 [Basic examples ](http://riax.se/sekvens/basic.html)
 
-[Advanced examples ](http://riax.se/sekvens/basic.html)
+[Advanced examples ](http://riax.se/sekvens/advanced.html)
 
 ## Examples
 ```javascript
