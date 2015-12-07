@@ -1,0 +1,12 @@
+{
+  "name": "sekvens",
+  "version": "0.0.1",
+  "homepage": "https://github.com/riax/sekvens",
+  "description": "Animation library without DOM dependency",
+  "main": [
+    "build/sekvens.min.js"
+  ],
+  "private": false,
+  "dependencies": {},
+  "devDependencies": {}
+}
