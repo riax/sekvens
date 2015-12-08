@@ -1,14 +1,12 @@
 var gulp = require("gulp");
 var concat = require("gulp-concat");
-var browserify = require("gulp-browserify");
 var uglify = require("gulp-uglify");
 var clean = require("gulp-clean");
 var ts = require("gulp-typescript");
-var wrap = require("gulp-wrap-amd");
 
 var tsProject = ts.createProject("./tsconfig.json");
 
-gulp.task("release", function () {
+gulp.task("default", function () {
     var result = gulp.src("src/**/*.ts")
         .pipe(ts(tsProject));
 
@@ -20,8 +18,8 @@ gulp.task("release", function () {
         .pipe(gulp.dest("build"))
 })
 
-gulp.task("default", function () {
-    gulp.watch("src/**/*.ts", ["release"]);
+gulp.task("watch", function () {
+    gulp.watch("src/**/*.ts", ["default"]);
 })
 
 gulp.task("clean", function () {

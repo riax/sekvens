@@ -160,19 +160,9 @@ define(["require", "exports"], function (require, exports) {
             });
         };
         ValueAnimation.prototype.startAnimation = function (callback) {
-            // if (requestAnimationFrame) {
-            //   let animate = () => {
-            //     callback();
-            //     this.animationId = requestAnimationFrame(animate);
-            //   }
-            //   this.animationId = requestAnimationFrame(animate);
-            // }
             this.animationId = setInterval(function () { return callback(); }, FPS_INTERVAL);
         };
         ValueAnimation.prototype.stopAnimation = function () {
-            // if (cancelAnimationFrame) {
-            //   cancelAnimationFrame(this.animationId);
-            // }
             clearInterval(this.animationId);
             this.animationId = null;
         };
