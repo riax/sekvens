@@ -34,12 +34,12 @@ export abstract class Sequence {
 
   repeat(count: number = Number.MAX_VALUE) {
     this.numberOfRepeats = count;
-    return this;
+    return <Sequence>this;
   }
 
   done(onComplete: Command) {
     this.onCompleteCallbacks.push(onComplete);
-    return this;
+    return <Sequence>this;
   }
 
   protected executeOnComplete() {
@@ -110,7 +110,7 @@ export class ValueAnimation extends Sequence {
       };
     });
     this.initialValue = Math.round(to);
-    return this;
+    return <ValueAnimation>this;
   }
 
   wait(duration: number) {
@@ -122,7 +122,7 @@ export class ValueAnimation extends Sequence {
         value: null
       };
     });
-    return this;
+    return <ValueAnimation>this;
   }
 
   stop() {
@@ -131,7 +131,7 @@ export class ValueAnimation extends Sequence {
 
   on(onStepComplete: ResultCallback) {
     this.stepCompleteCallback = onStepComplete;
-    return this;
+    return <ValueAnimation>this;
   }
 
   go(onGoComplete?: Command) {

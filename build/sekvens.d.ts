@@ -20,8 +20,8 @@ export declare abstract class Sequence {
     private onCompleteCallbacks;
     abstract stop(): void;
     abstract go(onDone?: Command): void;
-    repeat(count?: number): this;
-    done(onComplete: Command): this;
+    repeat(count?: number): Sequence;
+    done(onComplete: Command): Sequence;
     protected executeOnComplete(): void;
 }
 export declare class SequenceAnimation extends Sequence {
@@ -38,10 +38,10 @@ export declare class ValueAnimation extends Sequence {
     private animationId;
     private initialValue;
     constructor(value: number);
-    to(to: number, duration: number, easing?: (t: number) => number): this;
-    wait(duration: number): this;
+    to(to: number, duration: number, easing?: (t: number) => number): ValueAnimation;
+    wait(duration: number): ValueAnimation;
     stop(): void;
-    on(onStepComplete: ResultCallback): this;
+    on(onStepComplete: ResultCallback): ValueAnimation;
     go(onGoComplete?: Command): void;
     private startAnimation(callback);
     private stopAnimation();
