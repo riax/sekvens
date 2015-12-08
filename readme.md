@@ -1,7 +1,7 @@
 # Sekvens v0.0.1
-Sekvens is a basic animation library that has no DOM dependency. In fact it leaves the DOM manipilation to you. It works fine with most JavaScript libraries like React, Knockout, Backbone, JQuery etc.
+Sekvens is a basic animation library that has no DOM dependency. In fact it leaves the DOM manipulation to you. It works fine with most JavaScript libraries like React, Knockout, Backbone, JQuery etc.
 
-It is written in TypeScript and currently has a AMD dependency.
+It is written in TypeScript and currently has an AMD dependency.
 
 [Basic examples ](http://riax.se/sekvens/basic.html)
 
