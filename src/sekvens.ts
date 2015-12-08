@@ -22,11 +22,11 @@ export function from(value: number) {
   return new ValueAnimation(value);
 }
 
-export function chain(...sequences: Sequence[]) {
+export function chain(...sequences: AnimationBase[]) {
   return new SequenceAnimation(sequences);
 }
 
-export abstract class Sequence {
+export abstract class AnimationBase {
   protected numberOfRepeats = 0;
   private onCompleteCallbacks: Command[] = [];
   abstract stop(): void;
@@ -34,12 +34,12 @@ export abstract class Sequence {
 
   repeat(count: number = Number.MAX_VALUE) {
     this.numberOfRepeats = count;
-    return <Sequence>this;
+    return <AnimationBase>this;
   }
 
   done(onComplete: Command) {
     this.onCompleteCallbacks.push(onComplete);
-    return <Sequence>this;
+    return <AnimationBase>this;
   }
 
   protected executeOnComplete() {
@@ -49,9 +49,9 @@ export abstract class Sequence {
   }
 }
 
-export class SequenceAnimation extends Sequence {
+export class SequenceAnimation extends AnimationBase {
   private currentIndex = 0;
-  constructor(private sequences: Sequence[]) {
+  constructor(private sequences: AnimationBase[]) {
     super();
   }
 
@@ -84,7 +84,7 @@ export class SequenceAnimation extends Sequence {
   }
 }
 
-export class ValueAnimation extends Sequence {
+export class ValueAnimation extends AnimationBase {
   private actions: IAction[] = [];
   private sequence: number[] = null;
   private stepCompleteCallback: ResultCallback;

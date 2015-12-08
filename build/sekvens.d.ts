@@ -14,24 +14,24 @@ export declare let easeInQuint: (t: number) => number;
 export declare let easeOutQuint: (t: number) => number;
 export declare let easeInOutQuint: (t: number) => number;
 export declare function from(value: number): ValueAnimation;
-export declare function chain(...sequences: Sequence[]): SequenceAnimation;
-export declare abstract class Sequence {
+export declare function chain(...sequences: AnimationBase[]): SequenceAnimation;
+export declare abstract class AnimationBase {
     protected numberOfRepeats: number;
     private onCompleteCallbacks;
     abstract stop(): void;
     abstract go(onDone?: Command): void;
-    repeat(count?: number): Sequence;
-    done(onComplete: Command): Sequence;
+    repeat(count?: number): AnimationBase;
+    done(onComplete: Command): AnimationBase;
     protected executeOnComplete(): void;
 }
-export declare class SequenceAnimation extends Sequence {
+export declare class SequenceAnimation extends AnimationBase {
     private sequences;
     private currentIndex;
-    constructor(sequences: Sequence[]);
+    constructor(sequences: AnimationBase[]);
     go(onGoComplete?: Command): void;
     stop(): void;
 }
-export declare class ValueAnimation extends Sequence {
+export declare class ValueAnimation extends AnimationBase {
     private actions;
     private sequence;
     private stepCompleteCallback;

@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "es3",
         "noImplicitAny": true,
-        "module": "amd",
+        "module": "umd",
         "declaration": true
     },
     "compileOnSave": false

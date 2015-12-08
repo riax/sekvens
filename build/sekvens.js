@@ -1,9 +1,24 @@
+if (!(typeof module === "object" || typeof define === "function")) {
+      var require = {};
+      var exports = {};
+      var module = {
+            exports: {}
+      };
+      var sekvens = exports;  
+}
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define(["require", "exports"], function (require, exports) {
+(function (factory) {
+    if (typeof module === 'object' && typeof module.exports === 'object') {
+        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    }
+    else if (typeof define === 'function' && define.amd) {
+        define(["require", "exports"], factory);
+    }
+})(function (require, exports) {
     exports.linear = function (t) { return t; };
     exports.easeInQuad = function (t) { return t * t; };
     exports.easeOutQuad = function (t) { return t * (2 - t); };
@@ -30,29 +45,29 @@ define(["require", "exports"], function (require, exports) {
         return new SequenceAnimation(sequences);
     }
     exports.chain = chain;
-    var Sequence = (function () {
-        function Sequence() {
+    var AnimationBase = (function () {
+        function AnimationBase() {
             this.numberOfRepeats = 0;
             this.onCompleteCallbacks = [];
         }
-        Sequence.prototype.repeat = function (count) {
+        AnimationBase.prototype.repeat = function (count) {
             if (count === void 0) { count = Number.MAX_VALUE; }
             this.numberOfRepeats = count;
             return this;
         };
-        Sequence.prototype.done = function (onComplete) {
+        AnimationBase.prototype.done = function (onComplete) {
             this.onCompleteCallbacks.push(onComplete);
             return this;
         };
-        Sequence.prototype.executeOnComplete = function () {
+        AnimationBase.prototype.executeOnComplete = function () {
             for (var _i = 0, _a = this.onCompleteCallbacks; _i < _a.length; _i++) {
                 var callback = _a[_i];
                 callback();
             }
         };
-        return Sequence;
+        return AnimationBase;
     })();
-    exports.Sequence = Sequence;
+    exports.AnimationBase = AnimationBase;
     var SequenceAnimation = (function (_super) {
         __extends(SequenceAnimation, _super);
         function SequenceAnimation(sequences) {
@@ -90,7 +105,7 @@ define(["require", "exports"], function (require, exports) {
             this.sequences[this.currentIndex].stop();
         };
         return SequenceAnimation;
-    })(Sequence);
+    })(AnimationBase);
     exports.SequenceAnimation = SequenceAnimation;
     var ValueAnimation = (function (_super) {
         __extends(ValueAnimation, _super);
@@ -180,6 +195,6 @@ define(["require", "exports"], function (require, exports) {
             return values;
         };
         return ValueAnimation;
-    })(Sequence);
+    })(AnimationBase);
     exports.ValueAnimation = ValueAnimation;
 });
