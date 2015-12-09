@@ -3,8 +3,6 @@ var concat = require("gulp-concat");
 var uglify = require("gulp-uglify");
 var clean = require("gulp-clean");
 var ts = require("gulp-typescript");
-var amdClean = require("gulp-amdclean");
-var replace = require("gulp-replace");
 var tsProject = ts.createProject("./tsconfig.json");
 var addsrc = require("gulp-add-src");
 
