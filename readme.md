@@ -24,7 +24,7 @@ sekvens.from(0)
   }).go();
 ```
 
-### Animate to left 1000 px in 2000 ms using the easing "easeInOutQuint".
+### Animate left 1000 px in 2000 ms using the easing "easeInOutQuint".
 ```javascript
 var duration = 2000;
 sekvens.from(0)
