@@ -3,9 +3,9 @@ Sekvens is a basic JavaScript animation library that has no DOM dependency. In f
 
 Sekvens is written in TypeScript and works with AMD, CommonJS and in the global namespace.
 
-[Basic examples ](http://riax.se/sekvens/basic.html)
+[Basic examples ](http://riax.se/sekvens/examples/basic.html)
 
-[Advanced examples ](http://riax.se/sekvens/advanced.html)
+[Advanced examples ](http://riax.se/sekvens/examples/advanced.html)
 
 ## Examples
 
