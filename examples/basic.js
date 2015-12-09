@@ -9,10 +9,13 @@ function basicExample1() {
 
 function basicExample2() {
 	var duration = 10000;
+	var element = document.getElementById("basic-example-2");
 	sekvens.from(0)
 		.to(1000, duration, sekvens.easeInOutQuint)
 		.to(0, duration).on(function (value) {
-			document.getElementById("basic-example-2").style.marginLeft = value + "px";
+			element.style.marginLeft = value + "px";
+		}).done(function() {
+			element.textContent = "Animation finished";
 		}).go();
 }
 

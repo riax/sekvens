@@ -5,7 +5,7 @@
 	width: 100px;
 	border-radius: 100%;
 }
-#basic-example-2 {background-color: blue;}
+#basic-example-2 {background-color: blue; color: red; text-align: center;}
 #basic-example-3 {background-color: darkorange;}
 #basic-example-5 {background-color: green;}
 

@@ -40,6 +40,8 @@ sekvens.from(0)
   .repeat()
   .on(function (value) {
     document.getElementById("basic-example-5").style.marginLeft = value + "px";
+  }).done(function() {
+		console.log("Animation finished");
   }).go();
 ```
 

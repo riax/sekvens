@@ -18,9 +18,9 @@
 	background-color: black;
 }
 
-[id^="basic-example-4"] {
+#advanced-example-4 {
 	height: 100px;
 	width: 100px;
-	border-radius: 100%;
-	background-color: yellow;
+	text-align: center;
+	color: lime;
 }
