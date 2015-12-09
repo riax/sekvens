@@ -1,5 +1,5 @@
-# Sekvens v0.0.1
-Sekvens is a basic animation library that has no DOM dependency. In fact it leaves the DOM manipulation to you. It works fine with most JavaScript libraries like React, Knockout, Backbone, JQuery etc.
+# Sekvens
+Sekvens is a basic JavaScript animation library that has no DOM dependency. In fact it leaves the DOM manipulation to you. It works fine with most libraries like React, Knockout, Backbone, JQuery etc.
 
 Sekvens is written in TypeScript and works with AMD, CommonJS and in the global namespace.
 
@@ -19,7 +19,7 @@ sekvens.from(0)
   }).go();
 ```
 
-### Animate to left 1000px in 2000ms.
+### Animate to left 1000px in 2000ms using the easing easeInOutQuint.
 ```javascript
 var duration = 2000;
 sekvens.from(0)
@@ -43,7 +43,7 @@ sekvens.from(0)
   }).go();
 ```
 
-### Use chain() to chain multiple animations together and the they will run in sequence. The repeat(2) command will repeat move 5 times and the repeat(10) command will repeat the whole sequence 10 times. Multiple chains can be nested.
+### Use chain() to chain multiple animations together and the they will run in sequence. The repeat(2) command will repeat move 2 times and the repeat(10) command will repeat the whole chained sequence 10 times. Multiple chains can be nested.
 ```javascript
 var duration = 1000;
 var element = document.getElementById("advanced-example-2");
@@ -55,4 +55,34 @@ var move = sekvens.from(0)
   });
 
 sekvens.chain(sekvens.chain(move, move), move).repeat(10).go();
+```
+### Easings can be applied as an argument to the to() function. "easeInOutCubic" is the default if no argument is specified.
+```javascript
+sekvens.from(0).to(1000, duration, sekvens.easeInOutQuint).on(function (value) {
+  console.log(value);
+}).go();
+
+sekvens.linear
+sekvens.easeOutQuad
+sekvens.easeInQuad
+sekvens.easeInOutQuad
+sekvens.easeInCubic
+sekvens.easeOutCubic
+sekvens.easeInOutCubic
+sekvens.easeInQuart
+sekvens.easeOutQuart
+sekvens.easeInOutQuart
+sekvens.easeInQuint
+sekvens.easeOutQuint
+sekvens.easeInOutQuint
+
+```
+
+### The ES6 (Babel/TypeScript) syntax is slightly nicer :)
+
+```javascript
+sekvens.from(0)
+  .to(5000, 100)
+  .on(value => console.log(value))
+  .go();
 ```
