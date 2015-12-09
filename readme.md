@@ -7,11 +7,16 @@ Sekvens is written in TypeScript and works with AMD, CommonJS and in the global 
 
 [Advanced examples ](http://riax.se/sekvens/examples/advanced.html)
 
+### Install with bower package manager
+``` console
+bower install sekvens
+```
+
 ## Examples
 
-### Animate from 0 to 1000 in 1000ms and print the result to the console.
+### Animate from 0 to 1000 in 800 ms and print the result to the console.
 ```javascript
-var duration = 1000;
+var duration = 800;
 sekvens.from(0)
   .to(1000, duration)
   .on(function (value) {
@@ -19,7 +24,7 @@ sekvens.from(0)
   }).go();
 ```
 
-### Animate to left 1000px in 2000ms using the easing easeInOutQuint.
+### Animate to left 1000 px in 2000 ms using the easing "easeInOutQuint".
 ```javascript
 var duration = 2000;
 sekvens.from(0)
