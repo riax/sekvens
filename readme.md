@@ -63,13 +63,14 @@ var move = sekvens.from(0)
 
 sekvens.chain(sekvens.chain(move, move), move).repeat(10).go();
 ```
-### Easings can be applied as an argument to the to() function. "easeInOutCubic" is the default if no argument is specified.
+### Easings can be applied as an argument to the to() function. "swing" is the default if no argument is specified.
 ```javascript
 sekvens.from(0).to(1000, duration, sekvens.easeInOutQuint).on(function (value) {
   console.log(value);
 }).go();
 
 sekvens.linear
+sekvens.swing
 sekvens.easeOutQuad
 sekvens.easeInQuad
 sekvens.easeInOutQuad

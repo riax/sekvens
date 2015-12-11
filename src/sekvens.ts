@@ -2,6 +2,7 @@ interface IAction { (): IActionResult; }
 interface IActionResult { isLast: boolean; value: number; }
 export type ResultCallback = (result: number) => void;
 export type Command = () => void;
+export let swing = (t: number) => 0.5 - Math.cos( t * Math.PI ) / 2
 export let linear = (t: number) => t;
 export let easeInQuad = (t: number) => t * t;
 export let easeOutQuad = (t: number) => t * (2 - t);
@@ -15,7 +16,6 @@ export let easeInOutQuart = (t: number) => t < .5 ? 8 * t * t * t * t : 1 - 8 * 
 export let easeInQuint = (t: number) => t * t * t * t * t;
 export let easeOutQuint = (t: number) => 1 + (--t) * t * t * t * t;
 export let easeInOutQuint = (t: number) => t < .5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t;
-
 const FPS_INTERVAL = 1000 / 60;
 
 export function from(value: number) {
@@ -96,7 +96,7 @@ export class ValueAnimation extends AnimationBase {
     this.initialValue = value;
   }
 
-  to(to: number, duration: number, easing: (t: number) => number = easeInOutCubic) {
+  to(to: number, duration: number, easing: (t: number) => number = swing) {
     let initial = this.initialValue;
     let steps = duration / FPS_INTERVAL;
     let fraction = 1 / steps;
