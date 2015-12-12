@@ -1,5 +1,6 @@
 export declare type ResultCallback = (result: number) => void;
 export declare type Command = () => void;
+export declare let swing: (t: number) => number;
 export declare let linear: (t: number) => number;
 export declare let easeInQuad: (t: number) => number;
 export declare let easeOutQuad: (t: number) => number;

@@ -9,11 +9,14 @@ var addsrc = require("gulp-add-src");
 gulp.task("default", function () {
     var result = gulp.src("src/**/*.ts").pipe(ts(tsProject));
     result.dts.pipe(gulp.dest("build"))
-    result.js.pipe(addsrc.prepend("src/commonjs-to-global.js"))
+    result.js
         .pipe(concat("."))
         .pipe(gulp.dest("build/sekvens.js"))
         .pipe(uglify())
-        .pipe(gulp.dest("build/sekvens.min.js"));
+        .pipe(gulp.dest("build/sekvens.min.js"))
+        .pipe(addsrc.prepend("src/commonjs-to-global.js"))
+        .pipe(concat("."))
+        .pipe(gulp.dest("build/sekvens-global.min.js"))
 })
 
 gulp.task("watch", function () {

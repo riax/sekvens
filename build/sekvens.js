@@ -1,11 +1,3 @@
-if (!(typeof module === "object" || typeof define === "function")) {
-      var require = {};
-      var exports = {};
-      var module = {
-            exports: {}
-      };
-      var sekvens = exports;  
-}
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -19,6 +11,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         define(["require", "exports"], factory);
     }
 })(function (require, exports) {
+    exports.swing = function (t) { return 0.5 - Math.cos(t * Math.PI) / 2; };
     exports.linear = function (t) { return t; };
     exports.easeInQuad = function (t) { return t * t; };
     exports.easeOutQuad = function (t) { return t * (2 - t); };
@@ -116,7 +109,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             this.initialValue = value;
         }
         ValueAnimation.prototype.to = function (to, duration, easing) {
-            if (easing === void 0) { easing = exports.easeInOutCubic; }
+            if (easing === void 0) { easing = exports.swing; }
             var initial = this.initialValue;
             var steps = duration / FPS_INTERVAL;
             var fraction = 1 / steps;
