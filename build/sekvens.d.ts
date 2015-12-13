@@ -1,5 +1,19 @@
-export declare type OnStepComplete = (result: number, sekvens: ValueAnimation) => void;
+export interface IAction<T> {
+    (): {
+        isLast: boolean;
+        value: T;
+    };
+}
+export declare type OnStepComplete<T> = (result: T, sekvens: AnimationBase) => void;
 export declare type Command = () => void;
+export declare type Point = {
+    x: number;
+    y: number;
+};
+export declare type EasingFunction = (t: number) => number;
+export declare type ValueAnimationSettings = {
+    defaultEasing?: EasingFunction;
+};
 export declare let swing: (t: number) => number;
 export declare let linear: (t: number) => number;
 export declare let easeInQuad: (t: number) => number;
@@ -14,7 +28,8 @@ export declare let easeInOutQuart: (t: number) => number;
 export declare let easeInQuint: (t: number) => number;
 export declare let easeOutQuint: (t: number) => number;
 export declare let easeInOutQuint: (t: number) => number;
-export declare function from(value: number): ValueAnimation;
+export declare function from(value: number): SingleValueAnimation;
+export declare function fromPoint(value: Point): PointValueAnimation;
 export declare function chain(...sequences: AnimationBase[]): SequenceAnimation;
 export declare abstract class AnimationBase {
     protected numberOfRepeats: number;
@@ -32,19 +47,29 @@ export declare class SequenceAnimation extends AnimationBase {
     go(onGoComplete?: Command): void;
     stop(): void;
 }
-export declare class ValueAnimation extends AnimationBase {
-    private actions;
-    private sequence;
-    private stepCompleteCallback;
+export declare abstract class ValueAnimation<T> extends AnimationBase {
+    protected onStepComplete: OnStepComplete<T>;
+    protected sequence: T[];
+    protected actions: IAction<T>[];
+    protected initialValue: T;
+    protected valueAnimationSettings: ValueAnimationSettings;
     private animationId;
-    private initialValue;
-    constructor(value: number);
-    to(to: number, duration: number, easing?: (t: number) => number): ValueAnimation;
-    wait(duration: number): ValueAnimation;
+    constructor(value: T);
     stop(): void;
-    on(onStepComplete: OnStepComplete): ValueAnimation;
+    on(onStepComplete: OnStepComplete<T>): this;
     go(onGoComplete?: Command): void;
-    private startAnimation(callback);
-    private stopAnimation();
-    private createSequence(actions);
+    settings(settings: ValueAnimationSettings): this;
+    wait(duration: number): this;
+    protected createSequence(actions: IAction<T>[]): T[];
+    protected startAnimation(onTick: Command): void;
+    protected stopAnimation(): void;
+}
+export declare class SingleValueAnimation extends ValueAnimation<number> {
+    constructor(value: number);
+    to(to: number, duration: number, easing?: (t: number) => number): this;
+}
+export declare class PointValueAnimation extends ValueAnimation<Point> {
+    angle: number;
+    constructor(value: Point);
+    to(to: Point, duration: number, easing?: (t: number) => number): this;
 }

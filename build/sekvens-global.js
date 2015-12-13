@@ -21,6 +21,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         define(["require", "exports"], factory);
     }
 })(function (require, exports) {
+    ;
     exports.swing = function (t) { return 0.5 - Math.cos(t * Math.PI) / 2; };
     exports.linear = function (t) { return t; };
     exports.easeInQuad = function (t) { return t * t; };
@@ -37,9 +38,13 @@ var __extends = (this && this.__extends) || function (d, b) {
     exports.easeInOutQuint = function (t) { return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t; };
     var FPS_INTERVAL = 1000 / 60;
     function from(value) {
-        return new ValueAnimation(value);
+        return new SingleValueAnimation(value);
     }
     exports.from = from;
+    function fromPoint(value) {
+        return new PointValueAnimation(value);
+    }
+    exports.fromPoint = fromPoint;
     function chain() {
         var sequences = [];
         for (var _i = 0; _i < arguments.length; _i++) {
@@ -114,43 +119,16 @@ var __extends = (this && this.__extends) || function (d, b) {
         __extends(ValueAnimation, _super);
         function ValueAnimation(value) {
             _super.call(this);
-            this.actions = [];
             this.sequence = null;
+            this.actions = [];
+            this.valueAnimationSettings = { defaultEasing: exports.easeInOutCubic };
             this.initialValue = value;
         }
-        ValueAnimation.prototype.to = function (to, duration, easing) {
-            if (easing === void 0) { easing = exports.swing; }
-            var initial = this.initialValue;
-            var steps = duration / FPS_INTERVAL;
-            var fraction = 1 / steps;
-            var delta = to - this.initialValue;
-            var currentFraction = 0;
-            this.actions.push(function () {
-                var value = initial + (easing(currentFraction += fraction) * delta);
-                return {
-                    isLast: Math.round(value) === to,
-                    value: Math.round(value)
-                };
-            });
-            this.initialValue = Math.round(to);
-            return this;
-        };
-        ValueAnimation.prototype.wait = function (duration) {
-            var steps = Math.floor(duration / FPS_INTERVAL);
-            var stepCount = 0;
-            this.actions.push(function () {
-                return {
-                    isLast: stepCount++ === steps,
-                    value: null
-                };
-            });
-            return this;
-        };
         ValueAnimation.prototype.stop = function () {
             this.stopAnimation();
         };
         ValueAnimation.prototype.on = function (onStepComplete) {
-            this.stepCompleteCallback = onStepComplete;
+            this.onStepComplete = onStepComplete;
             return this;
         };
         ValueAnimation.prototype.go = function (onGoComplete) {
@@ -162,7 +140,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                 var value = _this.sequence[index++];
                 if (value !== undefined) {
                     if (value !== null) {
-                        _this.stepCompleteCallback && _this.stepCompleteCallback(value, _this);
+                        _this.onStepComplete && _this.onStepComplete(value, _this);
                     }
                 }
                 else {
@@ -177,12 +155,20 @@ var __extends = (this && this.__extends) || function (d, b) {
                 }
             });
         };
-        ValueAnimation.prototype.startAnimation = function (callback) {
-            this.animationId = setInterval(function () { return callback(); }, FPS_INTERVAL);
+        ValueAnimation.prototype.settings = function (settings) {
+            this.valueAnimationSettings.defaultEasing = settings.defaultEasing;
+            return this;
         };
-        ValueAnimation.prototype.stopAnimation = function () {
-            clearInterval(this.animationId);
-            this.animationId = null;
+        ValueAnimation.prototype.wait = function (duration) {
+            var steps = Math.floor(duration / FPS_INTERVAL);
+            var stepCount = 0;
+            this.actions.push(function () {
+                return {
+                    isLast: stepCount++ === steps,
+                    value: null
+                };
+            });
+            return this;
         };
         ValueAnimation.prototype.createSequence = function (actions) {
             var values = [];
@@ -197,9 +183,68 @@ var __extends = (this && this.__extends) || function (d, b) {
             }
             return values;
         };
+        ValueAnimation.prototype.startAnimation = function (onTick) {
+            this.animationId = setInterval(function () { return onTick(); }, FPS_INTERVAL);
+        };
+        ValueAnimation.prototype.stopAnimation = function () {
+            clearInterval(this.animationId);
+            this.animationId = null;
+        };
         return ValueAnimation;
     })(AnimationBase);
     exports.ValueAnimation = ValueAnimation;
+    var SingleValueAnimation = (function (_super) {
+        __extends(SingleValueAnimation, _super);
+        function SingleValueAnimation(value) {
+            _super.call(this, value);
+        }
+        SingleValueAnimation.prototype.to = function (to, duration, easing) {
+            if (easing === void 0) { easing = this.valueAnimationSettings.defaultEasing; }
+            var currentFraction = 0;
+            var initial = this.initialValue;
+            var steps = duration / FPS_INTERVAL;
+            var fraction = 1 / steps;
+            var delta = to - this.initialValue;
+            this.actions.push(function () {
+                var value = initial + (easing(currentFraction += fraction) * delta);
+                return {
+                    isLast: Math.round(value) === to,
+                    value: Math.round(value)
+                };
+            });
+            this.initialValue = Math.round(to);
+            return this;
+        };
+        return SingleValueAnimation;
+    })(ValueAnimation);
+    exports.SingleValueAnimation = SingleValueAnimation;
+    var PointValueAnimation = (function (_super) {
+        __extends(PointValueAnimation, _super);
+        function PointValueAnimation(value) {
+            _super.call(this, value);
+        }
+        PointValueAnimation.prototype.to = function (to, duration, easing) {
+            if (easing === void 0) { easing = this.valueAnimationSettings.defaultEasing; }
+            var currentFraction = 0;
+            var initial = this.initialValue;
+            var steps = duration / FPS_INTERVAL;
+            var fraction = 1 / steps;
+            var deltaX = to.x - this.initialValue.x;
+            var deltaY = to.y - this.initialValue.y;
+            this.actions.push(function () {
+                var x = initial.x + (easing(currentFraction += fraction) * deltaX);
+                var y = initial.y + (easing(currentFraction += fraction) * deltaY);
+                return {
+                    isLast: Math.round(x) === to.x && Math.round(y) === to.y,
+                    value: { x: Math.round(x), y: Math.round(y) }
+                };
+            });
+            this.initialValue = { x: Math.round(to.x), y: Math.round(to.y) };
+            return this;
+        };
+        return PointValueAnimation;
+    })(ValueAnimation);
+    exports.PointValueAnimation = PointValueAnimation;
 });
 
 })();

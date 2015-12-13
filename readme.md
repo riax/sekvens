@@ -1,11 +1,13 @@
 # Sekvens
-Sekvens is a basic JavaScript animation library that has no DOM dependency. In fact it leaves the DOM manipulation to you. It works fine with most libraries like React, Knockout, Backbone, JQuery etc.
+Sekvens is a basic JavaScript ~4k animation library that has no DOM dependency. In fact it leaves the DOM manipulation to you. It works fine with most libraries like React, Knockout, Backbone, JQuery etc. It also has support for basic 2D animations.
 
 Sekvens is written in TypeScript and works with AMD, CommonJS and in the global namespace.
 
 [Basic examples ](http://riax.se/sekvens/examples/basic.html)
 
 [Advanced examples ](http://riax.se/sekvens/examples/advanced.html)
+
+[2D examples ](http://riax.se/sekvens/examples/point.html)
 
 ## Setup 
 ### Install with bower package manager
@@ -50,7 +52,7 @@ sekvens.from(0)
   }).go();
 ```
 
-### Use of to() multiple times and wait() to pause. The repeat() command will repeat forever. Repeat also takes an integer as an argument like repeat(5) will repeat 5 times.
+### Use of to() multiple times and wait() to pause. The repeat() command will repeat forever. Repeat also takes an integer as an argument like repeat(5) will repeat 5 times. Using "easeInOutQuint" as a default easing.
 ```javascript
 sekvens.from(0)
   .to(200, 250)
@@ -58,6 +60,7 @@ sekvens.from(0)
   .to(500, 250)
   .wait(500)
   .to(0, 100)
+  .settings({ defaultEasing: easeInOutQuint })
   .repeat()
   .on(function (value) {
     document.getElementById("basic-example-5").style.marginLeft = value + "px";
@@ -79,7 +82,7 @@ var move = sekvens.from(0)
 
 sekvens.chain(sekvens.chain(move, move), move).repeat(10).go();
 ```
-### Easings can be applied as an argument to the to() function. "swing" is the default if no argument is specified.
+### Easings can be applied as an argument to the to() function. "easeInOutCubic" is the default if no argument is specified.
 ```javascript
 sekvens.from(0).to(1000, duration, sekvens.easeInOutQuint).on(function (value) {
   console.log(value);
@@ -100,6 +103,20 @@ sekvens.easeInQuint
 sekvens.easeOutQuint
 sekvens.easeInOutQuint
 
+```
+
+### 2D animation
+```javascript
+var element = document.getElementById("point-example-1");
+sekvens.fromPoint({ x: 0, y: 0 })
+  .to({ x: 0, y: 300 }, 2000)
+  .to({ x: 300, y: 300 }, 2000)
+  .to({ x: 0, y: 0 }, 2000)
+  .repeat()
+  .on(function (point) {
+    element.style.left = point.x + "px";
+    element.style.top = point.y + "px";
+  }).go();
 ```
 
 ### The ES6 (Babel/TypeScript) syntax is slightly nicer :)

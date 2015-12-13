@@ -1,8 +1,10 @@
-interface IAction { (): IActionResult; }
-interface IActionResult { isLast: boolean; value: number; }
-export type OnStepComplete = (result: number, sekvens: ValueAnimation) => void;
+export interface IAction<T> { (): { isLast: boolean; value: T; }};
+export type OnStepComplete<T> = (result: T, sekvens: AnimationBase) => void;
 export type Command = () => void;
-export let swing = (t: number) => 0.5 - Math.cos( t * Math.PI ) / 2
+export type Point = { x: number, y: number };
+export type EasingFunction = (t: number) => number;
+export type ValueAnimationSettings = { defaultEasing?: EasingFunction }
+export let swing = (t: number) => 0.5 - Math.cos(t * Math.PI) / 2
 export let linear = (t: number) => t;
 export let easeInQuad = (t: number) => t * t;
 export let easeOutQuad = (t: number) => t * (2 - t);
@@ -19,7 +21,11 @@ export let easeInOutQuint = (t: number) => t < .5 ? 16 * t * t * t * t * t : 1 +
 const FPS_INTERVAL = 1000 / 60;
 
 export function from(value: number) {
-  return new ValueAnimation(value);
+  return new SingleValueAnimation(value);
+}
+
+export function fromPoint(value: Point) {
+  return new PointValueAnimation(value);
 }
 
 export function chain(...sequences: AnimationBase[]) {
@@ -84,54 +90,26 @@ export class SequenceAnimation extends AnimationBase {
   }
 }
 
-export class ValueAnimation extends AnimationBase {
-  private actions: IAction[] = [];
-  private sequence: number[] = null;
-  private onStepComplete: OnStepComplete;
+export abstract class ValueAnimation<T> extends AnimationBase {
+  protected onStepComplete: OnStepComplete<T>;
+  protected sequence: T[] = null;  
+  protected actions: IAction<T>[] = [];
+  protected initialValue: T;
+  protected valueAnimationSettings: ValueAnimationSettings = { defaultEasing: easeInOutCubic };
   private animationId: number;
-  private initialValue: number;
-
-  constructor(value: number) {
+  
+  constructor(value: T){
     super();
-    this.initialValue = value;
-  }
-
-  to(to: number, duration: number, easing: (t: number) => number = swing) {
-    let initial = this.initialValue;
-    let steps = duration / FPS_INTERVAL;
-    let fraction = 1 / steps;
-    let delta = to - this.initialValue;
-    let currentFraction = 0;
-    this.actions.push(() => {
-      let value = initial + (easing(currentFraction += fraction) * delta)
-      return {
-        isLast: Math.round(value) === to,
-        value: Math.round(value)
-      };
-    });
-    this.initialValue = Math.round(to);
-    return <ValueAnimation>this;
-  }
-
-  wait(duration: number) {
-    let steps = Math.floor(duration / FPS_INTERVAL);
-    let stepCount = 0;
-    this.actions.push(() => {
-      return {
-        isLast: stepCount++ === steps,
-        value: null
-      };
-    });
-    return <ValueAnimation>this;
+    this.initialValue = value; 
   }
 
   stop() {
     this.stopAnimation();
   }
 
-  on(onStepComplete: OnStepComplete) {
+  on(onStepComplete: OnStepComplete<T>) {
     this.onStepComplete = onStepComplete;
-    return <ValueAnimation>this;
+    return this;
   }
 
   go(onGoComplete?: Command) {
@@ -155,18 +133,26 @@ export class ValueAnimation extends AnimationBase {
       }
     });
   }
-
-  private startAnimation(onTick: Command) {
-    this.animationId = setInterval(() => onTick(), FPS_INTERVAL)
+      
+  settings(settings: ValueAnimationSettings) {
+    this.valueAnimationSettings.defaultEasing = settings.defaultEasing;
+    return this;
   }
-
-  private stopAnimation() {
-    clearInterval(this.animationId);
-    this.animationId = null;
+    
+  wait(duration: number) {
+    let steps = Math.floor(duration / FPS_INTERVAL);
+    let stepCount = 0;
+    this.actions.push(() => {
+      return {
+        isLast: stepCount++ === steps,
+        value: null
+      };
+    });
+    return this;
   }
-
-  private createSequence(actions: IAction[]) {
-    let values: number[] = [];
+  
+  protected createSequence(actions: IAction<T>[]) {
+    let values: T[] = [];
     for (let action of actions) {
       let isLast: boolean;
       do {
@@ -176,5 +162,63 @@ export class ValueAnimation extends AnimationBase {
       } while (!isLast)
     }
     return values;
+  }
+  
+  protected startAnimation(onTick: Command) {
+    this.animationId = setInterval(() => onTick(), FPS_INTERVAL)
+  }
+
+  protected stopAnimation() {
+    clearInterval(this.animationId);
+    this.animationId = null;
+  }
+}
+
+export class SingleValueAnimation extends ValueAnimation<number> {
+  constructor(value: number) {
+    super(value);
+  }
+  
+  to(to: number, duration: number, easing = this.valueAnimationSettings.defaultEasing) {
+    let currentFraction = 0;
+    let initial = this.initialValue;
+    let steps = duration / FPS_INTERVAL;
+    let fraction = 1 / steps;
+    let delta = to - this.initialValue;
+    this.actions.push(() => {
+      let value = initial + (easing(currentFraction += fraction) * delta)
+      return {
+        isLast: Math.round(value) === to,
+        value: Math.round(value)
+      };
+    });
+    this.initialValue = Math.round(to);
+    return this;
+  }
+}
+
+export class PointValueAnimation extends ValueAnimation<Point>{
+  angle: number;
+  constructor(value: Point) {
+    super(value);
+  }
+    
+  to(to: Point, duration: number, easing = this.valueAnimationSettings.defaultEasing) {
+    let currentFraction = 0;
+    let initial = this.initialValue;
+    let steps = duration / FPS_INTERVAL;
+    let fraction = 1 / steps;
+    let deltaX = to.x - this.initialValue.x;
+    let deltaY = to.y - this.initialValue.y;
+    this.actions.push(() => {
+      let x = initial.x + (easing(currentFraction += fraction) * deltaX)
+      let y = initial.y + (easing(currentFraction += fraction) * deltaY)
+      return {
+        isLast: Math.round(x) === to.x && Math.round(y) === to.y,
+        value: { x: Math.round(x), y: Math.round(y)}
+      };
+    });
+    this.initialValue = { x: Math.round(to.x), y: Math.round(to.y) };
+    return this;
   }
 }
