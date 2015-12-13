@@ -12,6 +12,24 @@ Sekvens is written in TypeScript and works with AMD, CommonJS and in the global 
 bower install sekvens
 ```
 
+### Global namespace
+Just reference sekvens-global.js or sekvens-global.min.js and use the global variable "sekvens".
+```html
+<script src="sekvens-global.min.js"></script>
+```
+
+### AMD
+```javascript
+require(["sekvens-min"], function (sekvens) {
+  
+});
+```
+
+### CommonJS
+```javascript
+var sekvens = require("sekvens-min");
+```
+
 ## Examples
 
 ### Animate from 0 to 1000 in 800 ms and print the result to the console.
