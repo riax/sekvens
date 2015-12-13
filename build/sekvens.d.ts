@@ -1,4 +1,4 @@
-export declare type ResultCallback = (result: number) => void;
+export declare type OnStepComplete = (result: number, sekvens: ValueAnimation) => void;
 export declare type Command = () => void;
 export declare let swing: (t: number) => number;
 export declare let linear: (t: number) => number;
@@ -42,7 +42,7 @@ export declare class ValueAnimation extends AnimationBase {
     to(to: number, duration: number, easing?: (t: number) => number): ValueAnimation;
     wait(duration: number): ValueAnimation;
     stop(): void;
-    on(onStepComplete: ResultCallback): ValueAnimation;
+    on(onStepComplete: OnStepComplete): ValueAnimation;
     go(onGoComplete?: Command): void;
     private startAnimation(callback);
     private stopAnimation();

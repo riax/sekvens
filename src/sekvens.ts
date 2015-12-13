@@ -1,6 +1,6 @@
 interface IAction { (): IActionResult; }
 interface IActionResult { isLast: boolean; value: number; }
-export type ResultCallback = (result: number) => void;
+export type OnStepComplete = (result: number, sekvens: ValueAnimation) => void;
 export type Command = () => void;
 export let swing = (t: number) => 0.5 - Math.cos( t * Math.PI ) / 2
 export let linear = (t: number) => t;
@@ -87,7 +87,7 @@ export class SequenceAnimation extends AnimationBase {
 export class ValueAnimation extends AnimationBase {
   private actions: IAction[] = [];
   private sequence: number[] = null;
-  private stepCompleteCallback: ResultCallback;
+  private stepCompleteCallback: OnStepComplete;
   private animationId: number;
   private initialValue: number;
 
@@ -129,7 +129,7 @@ export class ValueAnimation extends AnimationBase {
     this.stopAnimation();
   }
 
-  on(onStepComplete: ResultCallback) {
+  on(onStepComplete: OnStepComplete) {
     this.stepCompleteCallback = onStepComplete;
     return <ValueAnimation>this;
   }
@@ -142,7 +142,7 @@ export class ValueAnimation extends AnimationBase {
       let value = this.sequence[index++]
       if (value !== undefined) {
         if (value !== null) {
-          this.stepCompleteCallback && this.stepCompleteCallback(value);
+          this.stepCompleteCallback && this.stepCompleteCallback(value, this);
         }
       } else {
         if (++repeatCount < this.numberOfRepeats) {

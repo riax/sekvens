@@ -9,7 +9,6 @@ var clone = require('gulp-clone');
 
 gulp.task("default", function () {
     var result = gulp.src("src/**/*.ts").pipe(ts(tsProject));
-
     result.js.pipe(clone())
         .pipe(concat("."))
         .pipe(gulp.dest("build/sekvens.js"))

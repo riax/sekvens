@@ -152,7 +152,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                 var value = _this.sequence[index++];
                 if (value !== undefined) {
                     if (value !== null) {
-                        _this.stepCompleteCallback && _this.stepCompleteCallback(value);
+                        _this.stepCompleteCallback && _this.stepCompleteCallback(value, _this);
                     }
                 }
                 else {
