@@ -87,7 +87,7 @@ export class SequenceAnimation extends AnimationBase {
 export class ValueAnimation extends AnimationBase {
   private actions: IAction[] = [];
   private sequence: number[] = null;
-  private stepCompleteCallback: OnStepComplete;
+  private onStepComplete: OnStepComplete;
   private animationId: number;
   private initialValue: number;
 
@@ -130,7 +130,7 @@ export class ValueAnimation extends AnimationBase {
   }
 
   on(onStepComplete: OnStepComplete) {
-    this.stepCompleteCallback = onStepComplete;
+    this.onStepComplete = onStepComplete;
     return <ValueAnimation>this;
   }
 
@@ -142,7 +142,7 @@ export class ValueAnimation extends AnimationBase {
       let value = this.sequence[index++]
       if (value !== undefined) {
         if (value !== null) {
-          this.stepCompleteCallback && this.stepCompleteCallback(value, this);
+          this.onStepComplete && this.onStepComplete(value, this);
         }
       } else {
         if (++repeatCount < this.numberOfRepeats) {
@@ -156,8 +156,8 @@ export class ValueAnimation extends AnimationBase {
     });
   }
 
-  private startAnimation(callback: Command) {
-    this.animationId = setInterval(() => callback(), FPS_INTERVAL)
+  private startAnimation(onTick: Command) {
+    this.animationId = setInterval(() => onTick(), FPS_INTERVAL)
   }
 
   private stopAnimation() {
