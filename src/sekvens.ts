@@ -198,7 +198,6 @@ export class SingleValueAnimation extends ValueAnimation<number> {
 }
 
 export class PointValueAnimation extends ValueAnimation<Point>{
-  angle: number;
   constructor(value: Point) {
     super(value);
   }
