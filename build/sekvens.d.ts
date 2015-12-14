@@ -56,20 +56,20 @@ export declare abstract class ValueAnimation<T> extends AnimationBase {
     private animationId;
     constructor(value: T);
     stop(): void;
-    on(onStepComplete: OnStepComplete<T>): this;
+    on(onStepComplete: OnStepComplete<T>): ValueAnimation<T>;
     go(onGoComplete?: Command): void;
-    settings(settings: ValueAnimationSettings): this;
-    wait(duration: number): this;
+    settings(settings: ValueAnimationSettings): ValueAnimation<T>;
+    wait(duration: number): ValueAnimation<T>;
     protected createSequence(actions: IAction<T>[]): T[];
     protected startAnimation(onTick: Command): void;
     protected stopAnimation(): void;
 }
 export declare class SingleValueAnimation extends ValueAnimation<number> {
     constructor(value: number);
-    to(to: number, duration: number, easing?: (t: number) => number): this;
+    to(to: number, duration: number, easing?: (t: number) => number): SingleValueAnimation;
 }
 export declare class PointValueAnimation extends ValueAnimation<Point> {
     angle: number;
     constructor(value: Point);
-    to(to: Point, duration: number, easing?: (t: number) => number): this;
+    to(to: Point, duration: number, easing?: (t: number) => number): PointValueAnimation;
 }

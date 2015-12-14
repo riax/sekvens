@@ -109,7 +109,7 @@ export abstract class ValueAnimation<T> extends AnimationBase {
 
   on(onStepComplete: OnStepComplete<T>) {
     this.onStepComplete = onStepComplete;
-    return this;
+    return <ValueAnimation<T>>this;
   }
 
   go(onGoComplete?: Command) {
@@ -136,7 +136,7 @@ export abstract class ValueAnimation<T> extends AnimationBase {
       
   settings(settings: ValueAnimationSettings) {
     this.valueAnimationSettings.defaultEasing = settings.defaultEasing;
-    return this;
+    return <ValueAnimation<T>>this;
   }
     
   wait(duration: number) {
@@ -148,7 +148,7 @@ export abstract class ValueAnimation<T> extends AnimationBase {
         value: null
       };
     });
-    return this;
+    return <ValueAnimation<T>>this;
   }
   
   protected createSequence(actions: IAction<T>[]) {
@@ -193,7 +193,7 @@ export class SingleValueAnimation extends ValueAnimation<number> {
       };
     });
     this.initialValue = Math.round(to);
-    return this;
+    return <SingleValueAnimation>this;
   }
 }
 
@@ -219,6 +219,6 @@ export class PointValueAnimation extends ValueAnimation<Point>{
       };
     });
     this.initialValue = { x: Math.round(to.x), y: Math.round(to.y) };
-    return this;
+    return <PointValueAnimation>this;
   }
 }
