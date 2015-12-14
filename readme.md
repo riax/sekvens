@@ -1,7 +1,7 @@
 # Sekvens
-Sekvens is a basic JavaScript ~4k animation library that has no DOM dependency. In fact it leaves the DOM manipulation to you. It works fine with most libraries like React, Knockout, Backbone, JQuery etc. It also has support for basic 2D animations.
+Sekvens is a basic ~4k JavaScript animation library that has no DOM dependency. In fact it leaves the DOM manipulation to you. It works fine with most libraries like React, Knockout, Backbone, JQuery etc. It also has support for basic 2D animations.
 
-Sekvens is written in TypeScript and works with AMD, CommonJS and in the global namespace.
+Sekvens is written in TypeScript and works with AMD, CommonJS and in the global namespace. "sekvens.d.ts" definition file is included.
 
 [Basic examples ](http://riax.se/sekvens/examples/basic.html)
 
@@ -9,36 +9,24 @@ Sekvens is written in TypeScript and works with AMD, CommonJS and in the global 
 
 [2D examples ](http://riax.se/sekvens/examples/point.html)
 
-## Setup 
-### Install with bower package manager
 ``` console
 bower install sekvens
 ```
 
-### Global namespace
-Just reference sekvens-global.js or sekvens-global.min.js and use the global variable "sekvens".
-```html
-<script src="sekvens-global.min.js"></script>
-```
-### AMD
-```javascript
-require(["sekvens-min"], function (sekvens) {
-  
-});
-```
-### CommonJS
-```javascript
-var sekvens = require("sekvens-min");
-```
 ## Examples
 
-### Animate from 0 to 1000 in 800 ms and print the result to the console.
+### Animate from 0 to 1000 in 800 ms and print the result to the console. 
 ```javascript
 var duration = 800;
 sekvens.from(0)
   .to(1000, duration)
   .on(function (value) {
-    console.log(value);
+    /* 
+      Use the "on" function to change the state of your animation. "On" will execute on every frame.
+      E.g in ReactJS you will do setState({ whatEver: value }) or in KnockoutJS change
+      an observable like whatEverObservable(value).
+    */
+    console.log(value); // prints 1,2,5,8 ... 999,100  
   }).go();
 ```
 
@@ -46,8 +34,10 @@ sekvens.from(0)
 ```javascript
 var duration = 2000;
 sekvens.from(0)
-  .to(1000, duration, sekvens.easeInOutQuint)
-  .to(0, duration).on(function (value) {
+  .to(1000, duration, sekvens.easeInOutQuint) // Apply an easing function
+  .to(0, duration)
+  .on(function (value) {
+    /* Here we change the margin of an entity with through the standard DOM API */
     document.getElementById("basic-example-2").style.marginLeft = value + "px";
   }).go();
 ```
@@ -56,11 +46,11 @@ sekvens.from(0)
 ```javascript
 sekvens.from(0)
   .to(200, 250)
-  .wait(500)
+  .wait(500) // "Wait" will pause the animation. Here we pause for 500 ms
   .to(500, 250)
   .wait(500)
   .to(0, 100)
-  .settings({ defaultEasing: sekvens.easeInOutQuint })
+  .settings({ defaultEasing: sekvens.easeInOutQuint }) // change the default easing function.
   .repeat()
   .on(function (value) {
     document.getElementById("basic-example-5").style.marginLeft = value + "px";
@@ -95,7 +85,7 @@ sekvens.easeInQuad
 sekvens.easeInOutQuad
 sekvens.easeInCubic
 sekvens.easeOutCubic
-sekvens.easeInOutCubic
+sekvens.easeInOutCubic // The default easing
 sekvens.easeInQuart
 sekvens.easeOutQuart
 sekvens.easeInOutQuart
@@ -108,7 +98,7 @@ sekvens.easeInOutQuint
 ### 2D animation
 ```javascript
 var element = document.getElementById("point-example-1");
-sekvens.fromPoint({ x: 0, y: 0 })
+sekvens.fromPoint({ x: 0, y: 0 }) // Use fromPoint instead of from
   .to({ x: 0, y: 300 }, 2000)
   .to({ x: 300, y: 300 }, 2000)
   .to({ x: 0, y: 0 }, 2000)
@@ -126,4 +116,26 @@ sekvens.from(0)
   .to(5000, 100)
   .on(value => console.log(value))
   .go();
+```
+
+## Setup 
+### Global namespace
+Just reference sekvens-global.js or sekvens-global.min.js and use the global variable "sekvens".
+```html
+<script src="sekvens-global.min.js"></script>
+<script>
+  sekvens.from(0).to(100, 1000).on(function(value){ console.log(value) }).go();
+</script>
+```
+### UMD (AMD & CommonJS)
+Just reference sekvens.js or sekvens-min.js for UMD
+```javascript
+// AMD
+require(["sekvens-min"], function (sekvens) {
+  sekvens.from(0).to(100, 1000).on(function(value){ console.log(value) }).go();
+});
+
+// CommonJs
+var sekvens = require("sekvens-min");
+sekvens.from(0).to(100, 1000).on(function(value){ console.log(value) }).go();
 ```
