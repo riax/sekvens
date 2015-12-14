@@ -9,6 +9,8 @@ Sekvens is written in TypeScript and works with AMD, CommonJS and in the global 
 
 [2D examples ](http://riax.se/sekvens/examples/point.html)
 
+[Codepen example ](http://codepen.io/anon/pen/KVVPEy)
+
 ``` console
 bower install sekvens
 ```
