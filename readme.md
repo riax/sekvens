@@ -60,7 +60,7 @@ sekvens.from(0)
   .to(500, 250)
   .wait(500)
   .to(0, 100)
-  .settings({ defaultEasing: easeInOutQuint })
+  .settings({ defaultEasing: sekvens.easeInOutQuint })
   .repeat()
   .on(function (value) {
     document.getElementById("basic-example-5").style.marginLeft = value + "px";
