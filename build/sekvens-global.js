@@ -37,6 +37,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     exports.easeOutQuint = function (t) { return 1 + (--t) * t * t * t * t; };
     exports.easeInOutQuint = function (t) { return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t; };
     var FPS_INTERVAL = 1000 / 60;
+    var rAF = window.requestAnimationFrame || requestAnimationFrameShim;
     function from(value) {
         return new SingleValueAnimation(value);
     }
@@ -46,11 +47,11 @@ var __extends = (this && this.__extends) || function (d, b) {
     }
     exports.fromPoint = fromPoint;
     function chain() {
-        var sequences = [];
+        var groups = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            sequences[_i - 0] = arguments[_i];
+            groups[_i - 0] = arguments[_i];
         }
-        return new SequenceAnimation(sequences);
+        return new ChainedAnimation(groups);
     }
     exports.chain = chain;
     var AnimationBase = (function () {
@@ -76,22 +77,22 @@ var __extends = (this && this.__extends) || function (d, b) {
         return AnimationBase;
     })();
     exports.AnimationBase = AnimationBase;
-    var SequenceAnimation = (function (_super) {
-        __extends(SequenceAnimation, _super);
-        function SequenceAnimation(sequences) {
+    var ChainedAnimation = (function (_super) {
+        __extends(ChainedAnimation, _super);
+        function ChainedAnimation(groups) {
             _super.call(this);
-            this.sequences = sequences;
+            this.groups = groups;
             this.currentIndex = 0;
         }
-        SequenceAnimation.prototype.go = function (onGoComplete) {
+        ChainedAnimation.prototype.go = function (onGoComplete) {
             var _this = this;
             var repeatCount = 0;
             var execute = function (index) {
-                var sequence = _this.sequences[index];
-                sequence.go(function () {
+                var animation = _this.groups[index];
+                animation.go(function () {
                     var nextIndex = index + 1;
                     var shouldRepeat = repeatCount++ < _this.numberOfRepeats;
-                    if (_this.sequences[nextIndex] !== undefined) {
+                    if (_this.groups[nextIndex] !== undefined) {
                         execute(nextIndex);
                     }
                     else {
@@ -107,14 +108,14 @@ var __extends = (this && this.__extends) || function (d, b) {
                 });
                 _this.currentIndex = index;
             };
-            this.sequences.length > 0 && execute(0);
+            this.groups.length > 0 && execute(0);
         };
-        SequenceAnimation.prototype.stop = function () {
-            this.sequences[this.currentIndex].stop();
+        ChainedAnimation.prototype.stop = function () {
+            this.groups[this.currentIndex].stop();
         };
-        return SequenceAnimation;
+        return ChainedAnimation;
     })(AnimationBase);
-    exports.SequenceAnimation = SequenceAnimation;
+    exports.ChainedAnimation = ChainedAnimation;
     var ValueAnimation = (function (_super) {
         __extends(ValueAnimation, _super);
         function ValueAnimation(value) {
@@ -148,11 +149,12 @@ var __extends = (this && this.__extends) || function (d, b) {
                         index = 0;
                     }
                     else {
-                        _this.stop();
                         _this.executeOnComplete();
                         onGoComplete && onGoComplete();
+                        return false;
                     }
                 }
+                return true;
             });
         };
         ValueAnimation.prototype.settings = function (settings) {
@@ -184,11 +186,18 @@ var __extends = (this && this.__extends) || function (d, b) {
             return values;
         };
         ValueAnimation.prototype.startAnimation = function (onTick) {
-            this.animationId = setInterval(function () { return onTick(); }, FPS_INTERVAL);
+            var _this = this;
+            this.isTicking = true;
+            var ticker = function () {
+                if (onTick() && _this.isTicking) {
+                    rAF(ticker);
+                }
+                ;
+            };
+            rAF(ticker);
         };
         ValueAnimation.prototype.stopAnimation = function () {
-            clearInterval(this.animationId);
-            this.animationId = null;
+            this.isTicking = false;
         };
         return ValueAnimation;
     })(AnimationBase);
@@ -207,9 +216,10 @@ var __extends = (this && this.__extends) || function (d, b) {
             var delta = to - this.initialValue;
             this.actions.push(function () {
                 var value = initial + (easing(currentFraction += fraction) * delta);
+                var roundedValue = Math.round(value);
                 return {
-                    isLast: Math.round(value) === to,
-                    value: Math.round(value)
+                    isLast: roundedValue === to,
+                    value: roundedValue
                 };
             });
             this.initialValue = Math.round(to);
@@ -232,11 +242,13 @@ var __extends = (this && this.__extends) || function (d, b) {
             var deltaX = to.x - this.initialValue.x;
             var deltaY = to.y - this.initialValue.y;
             this.actions.push(function () {
-                var x = initial.x + (easing(currentFraction += fraction) * deltaX);
-                var y = initial.y + (easing(currentFraction += fraction) * deltaY);
+                var easedFraction = easing(currentFraction += fraction);
+                var x = initial.x + (easedFraction * deltaX);
+                var y = initial.y + (easedFraction * deltaY);
+                var value = { x: Math.round(x), y: Math.round(y) };
                 return {
-                    isLast: Math.round(x) === to.x && Math.round(y) === to.y,
-                    value: { x: Math.round(x), y: Math.round(y) }
+                    isLast: value.x === to.x && value.y === to.y,
+                    value: value
                 };
             });
             this.initialValue = { x: Math.round(to.x), y: Math.round(to.y) };
@@ -245,6 +257,11 @@ var __extends = (this && this.__extends) || function (d, b) {
         return PointValueAnimation;
     })(ValueAnimation);
     exports.PointValueAnimation = PointValueAnimation;
+    function requestAnimationFrameShim(ticker) {
+        return setTimeout(function () {
+            ticker();
+        }, FPS_INTERVAL);
+    }
 });
 
 })();
