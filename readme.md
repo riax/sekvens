@@ -1,7 +1,7 @@
 # Sekvens
-Sekvens is a basic ~4k JavaScript animation library that has no DOM dependency. In fact it leaves the DOM manipulation to you. It works fine with most libraries like React, Knockout, Backbone, JQuery etc. It also has support for basic 2D animations.
+Sekvens is a basic ~4k (1.5k gzipped) JavaScript animation library that has no DOM dependency. In fact it leaves the DOM manipulation to you. It works fine with most libraries like React, Knockout, Backbone, JQuery etc. It also has support for basic 2D animations.
 
-Sekvens is written in TypeScript and works with AMD, CommonJS and in the global namespace. "sekvens.d.ts" definition file is included.
+Sekvens is written in TypeScript and works with AMD, CommonJS and in the global namespace. TypeScript definition file is included.
 
 [Basic examples ](http://riax.se/sekvens/examples/basic.html)
 
@@ -39,12 +39,12 @@ sekvens.from(0)
   .to(1000, duration, sekvens.easeInOutQuint) // Apply an easing function
   .to(0, duration)
   .on(function (value) {
-    /* Here we change the margin of an entity with through the standard DOM API */
+    /* Here we change the margin of an entity through the standard DOM API */
     document.getElementById("basic-example-2").style.marginLeft = value + "px";
   }).go();
 ```
 
-### Use of to() multiple times and wait() to pause. The repeat() command will repeat forever. Repeat also takes an integer as an argument like repeat(5) will repeat 5 times. Using "easeInOutQuint" as a default easing.
+### Use of to(), wait() multiple times to build an animation sequence. Repeat will repeat the sequence. 
 ```javascript
 sekvens.from(0)
   .to(200, 250)
@@ -53,7 +53,7 @@ sekvens.from(0)
   .wait(500)
   .to(0, 100)
   .settings({ defaultEasing: sekvens.easeInOutQuint }) // change the default easing function.
-  .repeat()
+  .repeat() // Repeat forever
   .on(function (value) {
     document.getElementById("basic-example-5").style.marginLeft = value + "px";
   }).done(function() {
@@ -61,25 +61,30 @@ sekvens.from(0)
   }).go();
 ```
 
-### Use chain() to chain multiple animations together and the they will run in sequence. The repeat(2) command will repeat move 2 times and the repeat(10) command will repeat the whole chained sequence 10 times. Multiple chains can be nested.
+### Sekvens supports chaining of multiple animations to run them in sequence. Multiple chains can be nested.
 ```javascript
 var duration = 1000;
 var element = document.getElementById("advanced-example-2");
 var move = sekvens.from(0)
-  .to(1000, duration)
-  .repeat(2)
-  .to(0, duration).on(function (value) {
-    element.style.marginLeft = value + "px";
-  });
+                  .to(1000, duration)
+                  .repeat(2) // Repeat two times
+                  .to(0, duration).on(function (value) {
+                    element.style.marginLeft = value + "px";
+                  });
 
-sekvens.chain(sekvens.chain(move, move), move).repeat(10).go();
+var innerChain = sekvens.chain(move, move);
+sekvens.chain(innerChain, move) // Nested chaining
+       .repeat(10).go(); 
 ```
 ### Easings can be applied as an argument to the to() function. "easeInOutCubic" is the default if no argument is specified.
 ```javascript
-sekvens.from(0).to(1000, duration, sekvens.easeInOutQuint).on(function (value) {
-  console.log(value);
-}).go();
+sekvens.from(0)
+       .to(1000, duration, sekvens.easeInOutQuint)
+       .on(function (value) {
+          console.log(value);
+        }).go();
 
+// Available easings
 sekvens.linear
 sekvens.swing
 sekvens.easeOutQuad
@@ -94,13 +99,12 @@ sekvens.easeInOutQuart
 sekvens.easeInQuint
 sekvens.easeOutQuint
 sekvens.easeInOutQuint
-
 ```
 
 ### 2D animation
 ```javascript
 var element = document.getElementById("point-example-1");
-sekvens.fromPoint({ x: 0, y: 0 }) // Use fromPoint instead of from
+sekvens.fromPoint({ x: 0, y: 0 }) // Use function fromPoint() instead of from()
   .to({ x: 0, y: 300 }, 2000)
   .to({ x: 300, y: 300 }, 2000)
   .to({ x: 0, y: 0 }, 2000)
