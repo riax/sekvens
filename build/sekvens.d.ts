@@ -61,8 +61,8 @@ export declare abstract class ValueAnimation<T> extends AnimationBase {
     settings(settings: ValueAnimationSettings): ValueAnimation<T>;
     wait(duration: number): ValueAnimation<T>;
     protected createSequence(actions: IAction<T>[]): T[];
-    startAnimation(onTick: () => boolean): void;
-    stopAnimation(): void;
+    protected startAnimation(onTick: () => boolean): void;
+    protected stopAnimation(): void;
 }
 export declare class SingleValueAnimation extends ValueAnimation<number> {
     constructor(value: number);

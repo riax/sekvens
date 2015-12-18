@@ -153,7 +153,7 @@ export abstract class ValueAnimation<T> extends AnimationBase {
     }
     return values;
   }
-  public startAnimation(onTick: () => boolean) {
+  protected startAnimation(onTick: () => boolean) {
     this.isTicking = true;
     let ticker = () => {
       if(onTick() && this.isTicking){
@@ -162,7 +162,7 @@ export abstract class ValueAnimation<T> extends AnimationBase {
     };
     rAF(ticker);
   }
-  public stopAnimation() {
+  protected stopAnimation() {
     this.isTicking = false;
   }
 }
