@@ -198,6 +198,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             _super.call(this, value);
         }
         SingleValueAnimation.prototype.to = function (to, duration, easing) {
+            if (duration === void 0) { duration = 0; }
             if (easing === void 0) { easing = this.valueAnimationSettings.defaultEasing; }
             var currentFraction = 0;
             var initial = this.initialValue;
@@ -224,6 +225,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             _super.call(this, value);
         }
         PointValueAnimation.prototype.to = function (to, duration, easing) {
+            if (duration === void 0) { duration = 0; }
             if (easing === void 0) { easing = this.valueAnimationSettings.defaultEasing; }
             var currentFraction = 0;
             var initial = this.initialValue;
