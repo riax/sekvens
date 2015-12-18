@@ -171,7 +171,7 @@ export class SingleValueAnimation extends ValueAnimation<number> {
   constructor(value: number) {
     super(value);
   }
-  to(to: number, duration: number, easing = this.valueAnimationSettings.defaultEasing) {
+  to(to: number, duration: number = 0, easing = this.valueAnimationSettings.defaultEasing) {
     let currentFraction = 0;
     let initial = this.initialValue;
     let steps = duration / FPS_INTERVAL;
@@ -194,7 +194,7 @@ export class PointValueAnimation extends ValueAnimation<Point>{
   constructor(value: Point) {
     super(value);
   }
-  to(to: Point, duration: number, easing = this.valueAnimationSettings.defaultEasing) {
+  to(to: Point, duration: number = 0, easing = this.valueAnimationSettings.defaultEasing) {
     let currentFraction = 0;
     let initial = this.initialValue;
     let steps = duration / FPS_INTERVAL;
