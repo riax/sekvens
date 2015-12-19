@@ -29,12 +29,12 @@ var __extends = (this && this.__extends) || function (d, b) {
     var FPS_INTERVAL = 1000 / 60;
     var rAF = window.requestAnimationFrame || requestAnimationFrameShim;
     function from(value) {
-        validateNumber(value);
+        ensurePositiveNumber(value);
         return new SingleValueAnimation(value);
     }
     exports.from = from;
     function fromPoint(value) {
-        validatePoint(value);
+        ensurePoint(value);
         return new PointValueAnimation(value);
     }
     exports.fromPoint = fromPoint;
@@ -57,6 +57,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             return this;
         };
         AnimationBase.prototype.done = function (onComplete) {
+            onComplete && ensureFunction(onComplete);
             this.onCompleteCallbacks.push(onComplete);
             return this;
         };
@@ -78,6 +79,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         }
         ChainedAnimation.prototype.go = function (onGoComplete) {
             var _this = this;
+            onGoComplete && ensureFunction(onGoComplete);
             var repeatCount = 0;
             var execute = function (index) {
                 var animation = _this.groups[index];
@@ -121,11 +123,13 @@ var __extends = (this && this.__extends) || function (d, b) {
             this.stopAnimation();
         };
         ValueAnimation.prototype.on = function (onStepComplete) {
+            ensureFunction(onStepComplete);
             this.onStepComplete = onStepComplete;
             return this;
         };
         ValueAnimation.prototype.go = function (onGoComplete) {
             var _this = this;
+            onGoComplete && ensureFunction(onGoComplete);
             var repeatCount = 0;
             var index = 0;
             this.sequence = this.sequence || this.createSequence(this.actions);
@@ -154,7 +158,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             return this;
         };
         ValueAnimation.prototype.wait = function (duration) {
-            validateNumber(duration);
+            ensurePositiveNumber(duration);
             var steps = Math.floor(duration / FPS_INTERVAL);
             var stepCount = 0;
             this.actions.push(function () {
@@ -202,8 +206,8 @@ var __extends = (this && this.__extends) || function (d, b) {
         }
         SingleValueAnimation.prototype.to = function (to, duration, easing) {
             if (easing === void 0) { easing = this.valueAnimationSettings.defaultEasing; }
-            validateNumber(to);
-            validateNumber(duration);
+            ensurePositiveNumber(to);
+            ensurePositiveNumber(duration);
             var currentFraction = 0;
             var initial = this.initialValue;
             var steps = duration / FPS_INTERVAL;
@@ -230,8 +234,8 @@ var __extends = (this && this.__extends) || function (d, b) {
         }
         PointValueAnimation.prototype.to = function (to, duration, easing) {
             if (easing === void 0) { easing = this.valueAnimationSettings.defaultEasing; }
-            validatePoint(to);
-            validateNumber(duration);
+            ensurePoint(to);
+            ensurePositiveNumber(duration);
             var currentFraction = 0;
             var initial = this.initialValue;
             var steps = duration / FPS_INTERVAL;
@@ -259,12 +263,16 @@ var __extends = (this && this.__extends) || function (d, b) {
             ticker();
         }, FPS_INTERVAL);
     }
-    function validateNumber(input) {
-        if (typeof input !== "number")
-            throw new TypeError("Expeted \"number\", but got " + JSON.stringify(input));
+    function ensurePositiveNumber(input) {
+        if (!(typeof input === "number" && input >= 0))
+            throw new TypeError("Expeted a positive number, but got " + JSON.stringify(input));
     }
-    function validatePoint(input) {
+    function ensurePoint(input) {
         if (!(typeof input === "object" && typeof input.x === "number" && typeof input.y === "number"))
-            throw new TypeError("Expeted \"point\", but got " + JSON.stringify(input));
+            throw new TypeError("Expeted a point, but got " + JSON.stringify(input));
+    }
+    function ensureFunction(input) {
+        if (typeof input !== "function")
+            throw new TypeError("Expeted a function, but got " + JSON.stringify(input));
     }
 });

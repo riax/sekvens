@@ -26,12 +26,12 @@ const FPS_INTERVAL = 1000 / 60;
 let rAF = window.requestAnimationFrame || requestAnimationFrameShim;
 
 export function from(value: number) {
-  validateNumber(value);    
+  ensurePositiveNumber(value);    
   return new SingleValueAnimation(value);
 }
 
 export function fromPoint(value: Point) {
-  validatePoint(value);    
+  ensurePoint(value);    
   return new PointValueAnimation(value);
 }
 
@@ -49,6 +49,7 @@ export abstract class AnimationBase {
     return <AnimationBase>this;
   }
   done(onComplete: Command) {
+    onComplete && ensureFunction(onComplete);
     this.onCompleteCallbacks.push(onComplete);
     return <AnimationBase>this;
   }
@@ -65,6 +66,7 @@ export class ChainedAnimation extends AnimationBase {
     super();
   }
   go(onGoComplete?: Command) {
+    onGoComplete && ensureFunction(onGoComplete);
     let repeatCount = 0;
     let execute = (index: number) => {
       let animation = this.groups[index];
@@ -107,10 +109,12 @@ export abstract class ValueAnimation<T> extends AnimationBase {
     this.stopAnimation();
   }
   on(onStepComplete: OnStepComplete<T>) {
+    ensureFunction(onStepComplete);
     this.onStepComplete = onStepComplete;
     return <ValueAnimation<T>>this;
   }
   go(onGoComplete?: Command) {
+    onGoComplete && ensureFunction(onGoComplete);
     let repeatCount = 0;
     let index = 0;
     this.sequence = this.sequence || this.createSequence(this.actions);
@@ -137,7 +141,7 @@ export abstract class ValueAnimation<T> extends AnimationBase {
     return <ValueAnimation<T>>this;
   }
   wait(duration: number) {
-    validateNumber(duration);
+    ensurePositiveNumber(duration);
     let steps = Math.floor(duration / FPS_INTERVAL);
     let stepCount = 0;
     this.actions.push(() => {
@@ -179,8 +183,8 @@ export class SingleValueAnimation extends ValueAnimation<number> {
     super(value);
   }
   to(to: number, duration: number, easing = this.valueAnimationSettings.defaultEasing) {
-    validateNumber(to);
-    validateNumber(duration);
+    ensurePositiveNumber(to);
+    ensurePositiveNumber(duration);
     let currentFraction = 0;
     let initial = this.initialValue;
     let steps = duration / FPS_INTERVAL;
@@ -204,8 +208,8 @@ export class PointValueAnimation extends ValueAnimation<Point>{
     super(value);
   }
   to(to: Point, duration: number, easing = this.valueAnimationSettings.defaultEasing) {
-    validatePoint(to);
-    validateNumber(duration);
+    ensurePoint(to);
+    ensurePositiveNumber(duration);
     let currentFraction = 0;
     let initial = this.initialValue;
     let steps = duration / FPS_INTERVAL;
@@ -233,12 +237,17 @@ function requestAnimationFrameShim(ticker: () => void) {
   }, FPS_INTERVAL);
 }
 
-function validateNumber(input: any){
-    if(typeof input !== "number") 
-        throw new TypeError(`Expeted "number", but got ${ JSON.stringify(input) }`);
+function ensurePositiveNumber(input: any){
+    if(!(typeof input === "number" && input >= 0))
+        throw new TypeError(`Expeted a positive number, but got ${ JSON.stringify(input) }`);
 }
 
-function validatePoint(input: any){
+function ensurePoint(input: any){
     if(!(typeof input === "object" && typeof input.x === "number" && typeof input.y === "number"))
-        throw new TypeError(`Expeted "point", but got ${ JSON.stringify(input) }`);
+        throw new TypeError(`Expeted a point, but got ${ JSON.stringify(input) }`);
+}
+
+function ensureFunction(input: any){
+    if(typeof input !== "function")
+        throw new TypeError(`Expeted a function, but got ${ JSON.stringify(input) }`);
 }
