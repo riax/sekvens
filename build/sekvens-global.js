@@ -39,10 +39,12 @@ var __extends = (this && this.__extends) || function (d, b) {
     var FPS_INTERVAL = 1000 / 60;
     var rAF = window.requestAnimationFrame || requestAnimationFrameShim;
     function from(value) {
+        validateNumber(value);
         return new SingleValueAnimation(value);
     }
     exports.from = from;
     function fromPoint(value) {
+        validatePoint(value);
         return new PointValueAnimation(value);
     }
     exports.fromPoint = fromPoint;
@@ -162,6 +164,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             return this;
         };
         ValueAnimation.prototype.wait = function (duration) {
+            validateNumber(duration);
             var steps = Math.floor(duration / FPS_INTERVAL);
             var stepCount = 0;
             this.actions.push(function () {
@@ -208,8 +211,9 @@ var __extends = (this && this.__extends) || function (d, b) {
             _super.call(this, value);
         }
         SingleValueAnimation.prototype.to = function (to, duration, easing) {
-            if (duration === void 0) { duration = 0; }
             if (easing === void 0) { easing = this.valueAnimationSettings.defaultEasing; }
+            validateNumber(to);
+            validateNumber(duration);
             var currentFraction = 0;
             var initial = this.initialValue;
             var steps = duration / FPS_INTERVAL;
@@ -235,8 +239,9 @@ var __extends = (this && this.__extends) || function (d, b) {
             _super.call(this, value);
         }
         PointValueAnimation.prototype.to = function (to, duration, easing) {
-            if (duration === void 0) { duration = 0; }
             if (easing === void 0) { easing = this.valueAnimationSettings.defaultEasing; }
+            validatePoint(to);
+            validateNumber(duration);
             var currentFraction = 0;
             var initial = this.initialValue;
             var steps = duration / FPS_INTERVAL;
@@ -263,6 +268,14 @@ var __extends = (this && this.__extends) || function (d, b) {
         return setTimeout(function () {
             ticker();
         }, FPS_INTERVAL);
+    }
+    function validateNumber(input) {
+        if (typeof input !== "number")
+            throw new TypeError("Expeted \"number\", but got " + JSON.stringify(input));
+    }
+    function validatePoint(input) {
+        if (!(typeof input === "object" && typeof input.x === "number" && typeof input.y === "number"))
+            throw new TypeError("Expeted \"point\", but got " + JSON.stringify(input));
     }
 });
 

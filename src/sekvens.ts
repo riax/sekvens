@@ -18,14 +18,20 @@ export let easeInOutQuart = (t: number) => t < .5 ? 8 * t * t * t * t : 1 - 8 * 
 export let easeInQuint = (t: number) => t * t * t * t * t;
 export let easeOutQuint = (t: number) => 1 + (--t) * t * t * t * t;
 export let easeInOutQuint = (t: number) => t < .5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t;
+interface IValidator {
+    (input:any): boolean;
+    description: string;
+}
 const FPS_INTERVAL = 1000 / 60;
 let rAF = window.requestAnimationFrame || requestAnimationFrameShim;
 
 export function from(value: number) {
+  validateNumber(value);    
   return new SingleValueAnimation(value);
 }
 
 export function fromPoint(value: Point) {
+  validatePoint(value);    
   return new PointValueAnimation(value);
 }
 
@@ -131,6 +137,7 @@ export abstract class ValueAnimation<T> extends AnimationBase {
     return <ValueAnimation<T>>this;
   }
   wait(duration: number) {
+    validateNumber(duration);
     let steps = Math.floor(duration / FPS_INTERVAL);
     let stepCount = 0;
     this.actions.push(() => {
@@ -171,7 +178,9 @@ export class SingleValueAnimation extends ValueAnimation<number> {
   constructor(value: number) {
     super(value);
   }
-  to(to: number, duration = 0, easing = this.valueAnimationSettings.defaultEasing) {
+  to(to: number, duration: number, easing = this.valueAnimationSettings.defaultEasing) {
+    validateNumber(to);
+    validateNumber(duration);
     let currentFraction = 0;
     let initial = this.initialValue;
     let steps = duration / FPS_INTERVAL;
@@ -194,7 +203,9 @@ export class PointValueAnimation extends ValueAnimation<Point>{
   constructor(value: Point) {
     super(value);
   }
-  to(to: Point, duration = 0, easing = this.valueAnimationSettings.defaultEasing) {
+  to(to: Point, duration: number, easing = this.valueAnimationSettings.defaultEasing) {
+    validatePoint(to);
+    validateNumber(duration);
     let currentFraction = 0;
     let initial = this.initialValue;
     let steps = duration / FPS_INTERVAL;
@@ -220,4 +231,14 @@ function requestAnimationFrameShim(ticker: () => void) {
   return setTimeout(() => {
     ticker();
   }, FPS_INTERVAL);
+}
+
+function validateNumber(input: any){
+    if(typeof input !== "number") 
+        throw new TypeError(`Expeted "number", but got ${ JSON.stringify(input) }`);
+}
+
+function validatePoint(input: any){
+    if(!(typeof input === "object" && typeof input.x === "number" && typeof input.y === "number"))
+        throw new TypeError(`Expeted "point", but got ${ JSON.stringify(input) }`);
 }

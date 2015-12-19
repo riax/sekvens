@@ -66,9 +66,9 @@ export declare abstract class ValueAnimation<T> extends AnimationBase {
 }
 export declare class SingleValueAnimation extends ValueAnimation<number> {
     constructor(value: number);
-    to(to: number, duration?: number, easing?: (t: number) => number): SingleValueAnimation;
+    to(to: number, duration: number, easing?: (t: number) => number): SingleValueAnimation;
 }
 export declare class PointValueAnimation extends ValueAnimation<Point> {
     constructor(value: Point);
-    to(to: Point, duration?: number, easing?: (t: number) => number): PointValueAnimation;
+    to(to: Point, duration: number, easing?: (t: number) => number): PointValueAnimation;
 }
