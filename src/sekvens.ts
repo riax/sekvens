@@ -26,7 +26,7 @@ const FPS_INTERVAL = 1000 / 60;
 let rAF = window.requestAnimationFrame || requestAnimationFrameShim;
 
 export function from(value: number) {
-  ensureNumber(value);    
+  ensureInteger(value);    
   return new SingleValueAnimation(value);
 }
 
@@ -79,7 +79,7 @@ export class ChainedAnimation extends AnimationBase {
           if (shouldRepeat) {
             execute(0);
           } else {
-            onGoComplete && onGoComplete();
+            !!onGoComplete && onGoComplete();
             this.executeOnComplete();
           }
           return;
@@ -129,7 +129,7 @@ export abstract class ValueAnimation<T> extends AnimationBase {
           index = 0;
         } else {
           this.executeOnComplete();
-          onGoComplete && onGoComplete();
+          !!onGoComplete && onGoComplete();
           return false;
         }
       }
@@ -183,7 +183,7 @@ export class SingleValueAnimation extends ValueAnimation<number> {
     super(value);
   }
   to(to: number, duration: number, easing = this.valueAnimationSettings.defaultEasing) {
-    ensureNumber(to);
+    ensureInteger(to);
     ensurePositiveNumber(duration);
     let currentFraction = 0;
     let initial = this.initialValue;
@@ -220,10 +220,10 @@ export class PointValueAnimation extends ValueAnimation<Point>{
       let easedFraction = easing(currentFraction += fraction);
       let x = initial.x + (easedFraction * deltaX)
       let y = initial.y + (easedFraction * deltaY)
-      let value = { x: Math.round(x), y: Math.round(y)};
+      let roundedValue = { x: Math.round(x), y: Math.round(y)};
       return {
-        isLast: value.x === to.x && value.y === to.y,
-        value: value
+        isLast: roundedValue.x === to.x && roundedValue.y === to.y,
+        value: roundedValue
       };
     });
     this.initialValue = { x: Math.round(to.x), y: Math.round(to.y) };
@@ -239,7 +239,7 @@ function requestAnimationFrameShim(ticker: () => void) {
 
 function ensurePoint(input: any) {
   let isObject = typeof input === "object";
-  if (!(isObject && typeof input.x === "number" && typeof input.y === "number"))
+  if (!isObject || typeof input.x !== "number" || typeof input.y !== "number")
     throwTypeError("point", isObject ? JSON.stringify(input) : typeof input);
 }
 
@@ -248,17 +248,17 @@ function ensureFunction(input: any) {
     throwTypeError("function", typeof input);
 }
 
-function ensureNumber(input: any) {
-  if (!(typeof input === "number"))
-    throwTypeError("number", typeof input);
+function ensureInteger(input: any) {
+  if (typeof input !== "number" || input % 1 !== 0)
+    throwTypeError("integer", input);
 }
 
 function ensurePositiveNumber(input: any) {
-  ensureNumber(input);
+  ensureInteger(input);
   if (input < 0)
     throwTypeError("positive number", input);
 }
 
 function throwTypeError(expected: string, got: string) {
-  throw new TypeError(`Expeted ${expected}, but got ${ got }`);
+  throw `Expeted ${expected}, but got ${got}`;
 }

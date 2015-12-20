@@ -39,7 +39,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     var FPS_INTERVAL = 1000 / 60;
     var rAF = window.requestAnimationFrame || requestAnimationFrameShim;
     function from(value) {
-        ensureNumber(value);
+        ensureInteger(value);
         return new SingleValueAnimation(value);
     }
     exports.from = from;
@@ -104,7 +104,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                             execute(0);
                         }
                         else {
-                            onGoComplete && onGoComplete();
+                            !!onGoComplete && onGoComplete();
                             _this.executeOnComplete();
                         }
                         return;
@@ -156,7 +156,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                     }
                     else {
                         _this.executeOnComplete();
-                        onGoComplete && onGoComplete();
+                        !!onGoComplete && onGoComplete();
                         return false;
                     }
                 }
@@ -216,7 +216,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         }
         SingleValueAnimation.prototype.to = function (to, duration, easing) {
             if (easing === void 0) { easing = this.valueAnimationSettings.defaultEasing; }
-            ensureNumber(to);
+            ensureInteger(to);
             ensurePositiveNumber(duration);
             var currentFraction = 0;
             var initial = this.initialValue;
@@ -256,10 +256,10 @@ var __extends = (this && this.__extends) || function (d, b) {
                 var easedFraction = easing(currentFraction += fraction);
                 var x = initial.x + (easedFraction * deltaX);
                 var y = initial.y + (easedFraction * deltaY);
-                var value = { x: Math.round(x), y: Math.round(y) };
+                var roundedValue = { x: Math.round(x), y: Math.round(y) };
                 return {
-                    isLast: value.x === to.x && value.y === to.y,
-                    value: value
+                    isLast: roundedValue.x === to.x && roundedValue.y === to.y,
+                    value: roundedValue
                 };
             });
             this.initialValue = { x: Math.round(to.x), y: Math.round(to.y) };
@@ -275,24 +275,24 @@ var __extends = (this && this.__extends) || function (d, b) {
     }
     function ensurePoint(input) {
         var isObject = typeof input === "object";
-        if (!(isObject && typeof input.x === "number" && typeof input.y === "number"))
+        if (!isObject || typeof input.x !== "number" || typeof input.y !== "number")
             throwTypeError("point", isObject ? JSON.stringify(input) : typeof input);
     }
     function ensureFunction(input) {
         if (typeof input !== "function")
             throwTypeError("function", typeof input);
     }
-    function ensureNumber(input) {
-        if (!(typeof input === "number"))
-            throwTypeError("number", typeof input);
+    function ensureInteger(input) {
+        if (typeof input !== "number" || input % 1 !== 0)
+            throwTypeError("integer", input);
     }
     function ensurePositiveNumber(input) {
-        ensureNumber(input);
+        ensureInteger(input);
         if (input < 0)
             throwTypeError("positive number", input);
     }
     function throwTypeError(expected, got) {
-        throw new TypeError("Expeted " + expected + ", but got " + got);
+        throw "Expeted " + expected + ", but got " + got;
     }
 });
 
