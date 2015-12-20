@@ -237,23 +237,28 @@ function requestAnimationFrameShim(ticker: () => void) {
   }, FPS_INTERVAL);
 }
 
-function ensurePoint(input: any){
-    if(!(typeof input === "object" && typeof input.x === "number" && typeof input.y === "number"))
-        throw new TypeError(`Expeted a point, but got ${ JSON.stringify(input) }`);
+function ensurePoint(input: any) {
+  let isObject = typeof input === "object";
+  if (!(isObject && typeof input.x === "number" && typeof input.y === "number"))
+    throwTypeError("point", isObject ? JSON.stringify(input) : typeof input);
 }
 
-function ensureFunction(input: any){
-    if(typeof input !== "function")
-        throw new TypeError(`Expeted a function, but got ${ JSON.stringify(input) }`);
+function ensureFunction(input: any) {
+  if (typeof input !== "function")
+    throwTypeError("function", typeof input);
 }
 
-function ensureNumber(input: any){
-    if(!(typeof input === "number"))
-        throw new TypeError(`Expeted a number, but got ${ JSON.stringify(input) }`);
+function ensureNumber(input: any) {
+  if (!(typeof input === "number"))
+    throwTypeError("number", typeof input);
 }
 
-function ensurePositiveNumber(input: any){
-    ensureNumber(input);
-    if(input < 0)
-        throw new TypeError(`Expeted a positive number, but got ${ JSON.stringify(input) }`);
+function ensurePositiveNumber(input: any) {
+  ensureNumber(input);
+  if (input < 0)
+    throwTypeError("positive number", input);
+}
+
+function throwTypeError(expected: string, got: string) {
+  throw new TypeError(`Expeted ${expected}, but got ${ got }`);
 }

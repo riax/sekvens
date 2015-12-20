@@ -274,21 +274,25 @@ var __extends = (this && this.__extends) || function (d, b) {
         }, FPS_INTERVAL);
     }
     function ensurePoint(input) {
-        if (!(typeof input === "object" && typeof input.x === "number" && typeof input.y === "number"))
-            throw new TypeError("Expeted a point, but got " + JSON.stringify(input));
+        var isObject = typeof input === "object";
+        if (!(isObject && typeof input.x === "number" && typeof input.y === "number"))
+            throwTypeError("point", isObject ? JSON.stringify(input) : typeof input);
     }
     function ensureFunction(input) {
         if (typeof input !== "function")
-            throw new TypeError("Expeted a function, but got " + JSON.stringify(input));
+            throwTypeError("function", typeof input);
     }
     function ensureNumber(input) {
         if (!(typeof input === "number"))
-            throw new TypeError("Expeted a number, but got " + JSON.stringify(input));
+            throwTypeError("number", typeof input);
     }
     function ensurePositiveNumber(input) {
         ensureNumber(input);
         if (input < 0)
-            throw new TypeError("Expeted a positive number, but got " + JSON.stringify(input));
+            throwTypeError("positive number", input);
+    }
+    function throwTypeError(expected, got) {
+        throw new TypeError("Expeted " + expected + ", but got " + got);
     }
 });
 
