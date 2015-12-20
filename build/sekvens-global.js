@@ -218,10 +218,12 @@ var __extends = (this && this.__extends) || function (d, b) {
             if (easing === void 0) { easing = this.valueAnimationSettings.defaultEasing; }
             ensureInteger(to);
             ensurePositiveNumber(duration);
+            var delta = to - this.initialValue;
+            if (delta === 0)
+                return this;
             var currentFraction = 0;
             var initial = this.initialValue;
             var fraction = calculateFrameFraction(duration);
-            var delta = to - this.initialValue;
             this.actions.push(function () {
                 var value = initial + (easing(currentFraction += fraction) * delta);
                 var roundedValue = Math.round(value);
@@ -245,11 +247,13 @@ var __extends = (this && this.__extends) || function (d, b) {
             if (easing === void 0) { easing = this.valueAnimationSettings.defaultEasing; }
             ensurePoint(to);
             ensurePositiveNumber(duration);
+            var deltaX = to.x - this.initialValue.x;
+            var deltaY = to.y - this.initialValue.y;
+            if (deltaX === 0 && deltaY === 0)
+                return this;
             var currentFraction = 0;
             var initial = this.initialValue;
             var fraction = calculateFrameFraction(duration);
-            var deltaX = to.x - this.initialValue.x;
-            var deltaY = to.y - this.initialValue.y;
             this.actions.push(function () {
                 var easedFraction = easing(currentFraction += fraction);
                 var x = initial.x + (easedFraction * deltaX);

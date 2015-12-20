@@ -44,14 +44,14 @@ export abstract class AnimationBase {
   private onCompleteCallbacks: Command[] = [];
   abstract stop(): void;
   abstract go(onDone?: Command): void;
-  repeat(count: number = Number.MAX_VALUE) {
+  repeat(count: number = Number.MAX_VALUE) : AnimationBase {
     this.numberOfRepeats = count;
-    return <AnimationBase>this;
+    return this;
   }
-  done(onComplete: Command) {
+  done(onComplete: Command) : AnimationBase {
     onComplete && ensureFunction(onComplete);
     this.onCompleteCallbacks.push(onComplete);
-    return <AnimationBase>this;
+    return this;
   }
   protected executeOnComplete() {
     for (let callback of this.onCompleteCallbacks) {
@@ -108,10 +108,10 @@ export abstract class ValueAnimation<T> extends AnimationBase {
   stop() {
     this.stopAnimation();
   }
-  on(onStepComplete: OnStepComplete<T>) {
+  on(onStepComplete: OnStepComplete<T>) : ValueAnimation<T> {
     ensureFunction(onStepComplete);
     this.onStepComplete = onStepComplete;
-    return <ValueAnimation<T>>this;
+    return this;
   }
   go(onGoComplete?: Command) {
     onGoComplete && ensureFunction(onGoComplete);
@@ -140,7 +140,7 @@ export abstract class ValueAnimation<T> extends AnimationBase {
     this.valueAnimationSettings.defaultEasing = settings.defaultEasing;
     return <ValueAnimation<T>>this;
   }
-  wait(duration: number) {
+  wait(duration: number) : ValueAnimation<T> {
     ensurePositiveNumber(duration);
     let steps = Math.floor(duration / FPS_INTERVAL);
     let stepCount = 0;
@@ -150,7 +150,7 @@ export abstract class ValueAnimation<T> extends AnimationBase {
         value: null
       };
     });
-    return <ValueAnimation<T>>this;
+    return this;
   }
   protected createSequence(actions: IAction<T>[]) {
     let values: T[] = [];
@@ -182,13 +182,14 @@ export class SingleValueAnimation extends ValueAnimation<number> {
   constructor(value: number) {
     super(value);
   }
-  to(to: number, duration: number, easing = this.valueAnimationSettings.defaultEasing) {
+  to(to: number, duration: number, easing = this.valueAnimationSettings.defaultEasing) : SingleValueAnimation {
     ensureInteger(to);
     ensurePositiveNumber(duration);
+    let delta = to - this.initialValue;
+    if(delta === 0) return this;
     let currentFraction = 0;
     let initial = this.initialValue;
     let fraction = calculateFrameFraction(duration);
-    let delta = to - this.initialValue;
     this.actions.push(() => {
       let value = initial + (easing(currentFraction += fraction) * delta)
       let roundedValue = Math.round(value);
@@ -198,7 +199,7 @@ export class SingleValueAnimation extends ValueAnimation<number> {
       };
     });
     this.initialValue = Math.round(to);
-    return <SingleValueAnimation>this;
+    return this;
   }
 }
 
@@ -206,14 +207,15 @@ export class PointValueAnimation extends ValueAnimation<Point>{
   constructor(value: Point) {
     super(value);
   }
-  to(to: Point, duration: number, easing = this.valueAnimationSettings.defaultEasing) {
+  to(to: Point, duration: number, easing = this.valueAnimationSettings.defaultEasing) : PointValueAnimation {
     ensurePoint(to);
     ensurePositiveNumber(duration);
+    let deltaX = to.x - this.initialValue.x;
+    let deltaY = to.y - this.initialValue.y;
+    if(deltaX === 0 && deltaY === 0) return this;
     let currentFraction = 0;
     let initial = this.initialValue;
     let fraction = calculateFrameFraction(duration);
-    let deltaX = to.x - this.initialValue.x;
-    let deltaY = to.y - this.initialValue.y;
     this.actions.push(() => {
       let easedFraction = easing(currentFraction += fraction);
       let x = initial.x + (easedFraction * deltaX)
@@ -225,7 +227,7 @@ export class PointValueAnimation extends ValueAnimation<Point>{
       };
     });
     this.initialValue = { x: Math.round(to.x), y: Math.round(to.y) };
-    return <PointValueAnimation>this;
+    return this;
   }
 }
 
