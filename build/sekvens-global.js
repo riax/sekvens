@@ -39,7 +39,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     var FPS_INTERVAL = 1000 / 60;
     var rAF = window.requestAnimationFrame || requestAnimationFrameShim;
     function from(value) {
-        ensurePositiveNumber(value);
+        ensureNumber(value);
         return new SingleValueAnimation(value);
     }
     exports.from = from;
@@ -216,7 +216,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         }
         SingleValueAnimation.prototype.to = function (to, duration, easing) {
             if (easing === void 0) { easing = this.valueAnimationSettings.defaultEasing; }
-            ensurePositiveNumber(to);
+            ensureNumber(to);
             ensurePositiveNumber(duration);
             var currentFraction = 0;
             var initial = this.initialValue;
@@ -273,10 +273,6 @@ var __extends = (this && this.__extends) || function (d, b) {
             ticker();
         }, FPS_INTERVAL);
     }
-    function ensurePositiveNumber(input) {
-        if (!(typeof input === "number" && input >= 0))
-            throw new TypeError("Expeted a positive number, but got " + JSON.stringify(input));
-    }
     function ensurePoint(input) {
         if (!(typeof input === "object" && typeof input.x === "number" && typeof input.y === "number"))
             throw new TypeError("Expeted a point, but got " + JSON.stringify(input));
@@ -284,6 +280,15 @@ var __extends = (this && this.__extends) || function (d, b) {
     function ensureFunction(input) {
         if (typeof input !== "function")
             throw new TypeError("Expeted a function, but got " + JSON.stringify(input));
+    }
+    function ensureNumber(input) {
+        if (!(typeof input === "number"))
+            throw new TypeError("Expeted a number, but got " + JSON.stringify(input));
+    }
+    function ensurePositiveNumber(input) {
+        ensureNumber(input);
+        if (input < 0)
+            throw new TypeError("Expeted a positive number, but got " + JSON.stringify(input));
     }
 });
 

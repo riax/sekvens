@@ -26,7 +26,7 @@ const FPS_INTERVAL = 1000 / 60;
 let rAF = window.requestAnimationFrame || requestAnimationFrameShim;
 
 export function from(value: number) {
-  ensurePositiveNumber(value);    
+  ensureNumber(value);    
   return new SingleValueAnimation(value);
 }
 
@@ -183,7 +183,7 @@ export class SingleValueAnimation extends ValueAnimation<number> {
     super(value);
   }
   to(to: number, duration: number, easing = this.valueAnimationSettings.defaultEasing) {
-    ensurePositiveNumber(to);
+    ensureNumber(to);
     ensurePositiveNumber(duration);
     let currentFraction = 0;
     let initial = this.initialValue;
@@ -237,11 +237,6 @@ function requestAnimationFrameShim(ticker: () => void) {
   }, FPS_INTERVAL);
 }
 
-function ensurePositiveNumber(input: any){
-    if(!(typeof input === "number" && input >= 0))
-        throw new TypeError(`Expeted a positive number, but got ${ JSON.stringify(input) }`);
-}
-
 function ensurePoint(input: any){
     if(!(typeof input === "object" && typeof input.x === "number" && typeof input.y === "number"))
         throw new TypeError(`Expeted a point, but got ${ JSON.stringify(input) }`);
@@ -250,4 +245,15 @@ function ensurePoint(input: any){
 function ensureFunction(input: any){
     if(typeof input !== "function")
         throw new TypeError(`Expeted a function, but got ${ JSON.stringify(input) }`);
+}
+
+function ensureNumber(input: any){
+    if(!(typeof input === "number"))
+        throw new TypeError(`Expeted a number, but got ${ JSON.stringify(input) }`);
+}
+
+function ensurePositiveNumber(input: any){
+    ensureNumber(input);
+    if(input < 0)
+        throw new TypeError(`Expeted a positive number, but got ${ JSON.stringify(input) }`);
 }
