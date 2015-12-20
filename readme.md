@@ -1,5 +1,5 @@
 # Sekvens
-Sekvens is a basic ~4k (1.5k gzipped) JavaScript animation library that has no DOM dependency. In fact it leaves the DOM manipulation to you. It works fine with most libraries like React, Knockout, Backbone, JQuery etc. It also has support for basic 2D animations.
+Sekvens is a basic ~5k (1.7k gzipped) JavaScript animation library that has no DOM dependency. In fact it leaves the DOM manipulation to you. It works fine with most libraries like React, Knockout, Backbone, JQuery etc. It also has support for basic 2D animations.
 
 Sekvens is written in TypeScript and works with AMD, CommonJS and in the global namespace. TypeScript definition file is included.
 
