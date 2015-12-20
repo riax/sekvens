@@ -159,11 +159,13 @@ var __extends = (this && this.__extends) || function (d, b) {
         };
         ValueAnimation.prototype.wait = function (duration) {
             ensurePositiveNumber(duration);
-            var steps = Math.floor(duration / FPS_INTERVAL);
+            var numberOfSteps = snapToFPSInterval(duration) / FPS_INTERVAL;
+            if (numberOfSteps === 0)
+                return this;
             var stepCount = 0;
             this.actions.push(function () {
                 return {
-                    isLast: stepCount++ === steps,
+                    isLast: stepCount++ === numberOfSteps,
                     value: null
                 };
             });
@@ -261,9 +263,11 @@ var __extends = (this && this.__extends) || function (d, b) {
     })(ValueAnimation);
     exports.PointValueAnimation = PointValueAnimation;
     function calculateFrameFraction(duration) {
-        var adjustedDuration = Math.max(Math.round(duration / FPS_INTERVAL) * FPS_INTERVAL, FPS_INTERVAL);
-        var numberOfSteps = adjustedDuration / FPS_INTERVAL;
+        var numberOfSteps = Math.max(snapToFPSInterval(duration), FPS_INTERVAL) / FPS_INTERVAL;
         return 1 / numberOfSteps;
+    }
+    function snapToFPSInterval(duration) {
+        return Math.round(duration / FPS_INTERVAL) * FPS_INTERVAL;
     }
     function requestAnimationFrameShim(ticker) {
         return setTimeout(function () {

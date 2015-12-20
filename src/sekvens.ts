@@ -136,17 +136,18 @@ export abstract class ValueAnimation<T> extends AnimationBase {
       return true;
     });
   }
-  settings(settings: ValueAnimationSettings) {
+  settings(settings: ValueAnimationSettings) : ValueAnimation<T> {
     this.valueAnimationSettings.defaultEasing = settings.defaultEasing;
-    return <ValueAnimation<T>>this;
+    return this;
   }
   wait(duration: number) : ValueAnimation<T> {
     ensurePositiveNumber(duration);
-    let steps = Math.floor(duration / FPS_INTERVAL);
+    let numberOfSteps = snapToFPSInterval(duration) / FPS_INTERVAL;
+    if(numberOfSteps === 0) return this;
     let stepCount = 0;
     this.actions.push(() => {
       return {
-        isLast: stepCount++ === steps,
+        isLast: stepCount++ === numberOfSteps,
         value: null
       };
     });
@@ -232,9 +233,12 @@ export class PointValueAnimation extends ValueAnimation<Point>{
 }
 
 function calculateFrameFraction(duration: number){
-    let adjustedDuration = Math.max(Math.round(duration / FPS_INTERVAL) * FPS_INTERVAL, FPS_INTERVAL);
-    let numberOfSteps = adjustedDuration / FPS_INTERVAL;
+    let numberOfSteps = Math.max(snapToFPSInterval(duration), FPS_INTERVAL) / FPS_INTERVAL;
     return 1 / numberOfSteps;
+}
+
+function snapToFPSInterval(duration: number){
+    return Math.round(duration / FPS_INTERVAL) * FPS_INTERVAL;
 }
 
 function requestAnimationFrameShim(ticker: () => void) {
