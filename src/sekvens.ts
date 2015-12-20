@@ -187,14 +187,13 @@ export class SingleValueAnimation extends ValueAnimation<number> {
     ensurePositiveNumber(duration);
     let currentFraction = 0;
     let initial = this.initialValue;
-    let steps = duration / FPS_INTERVAL;
-    let fraction = 1 / steps;
+    let fraction = calculateFrameFraction(duration);
     let delta = to - this.initialValue;
     this.actions.push(() => {
       let value = initial + (easing(currentFraction += fraction) * delta)
       let roundedValue = Math.round(value);
       return {
-        isLast: roundedValue === to,
+        isLast: roundedValue === Math.round(to),
         value: roundedValue
       };
     });
@@ -212,8 +211,7 @@ export class PointValueAnimation extends ValueAnimation<Point>{
     ensurePositiveNumber(duration);
     let currentFraction = 0;
     let initial = this.initialValue;
-    let steps = duration / FPS_INTERVAL;
-    let fraction = 1 / steps;
+    let fraction = calculateFrameFraction(duration);
     let deltaX = to.x - this.initialValue.x;
     let deltaY = to.y - this.initialValue.y;
     this.actions.push(() => {
@@ -222,13 +220,19 @@ export class PointValueAnimation extends ValueAnimation<Point>{
       let y = initial.y + (easedFraction * deltaY)
       let roundedValue = { x: Math.round(x), y: Math.round(y)};
       return {
-        isLast: roundedValue.x === to.x && roundedValue.y === to.y,
+        isLast: roundedValue.x === Math.round(to.x) && roundedValue.y === Math.round(to.y),
         value: roundedValue
       };
     });
     this.initialValue = { x: Math.round(to.x), y: Math.round(to.y) };
     return <PointValueAnimation>this;
   }
+}
+
+function calculateFrameFraction(duration: number){
+    let adjustedDuration = Math.max(Math.round(duration / FPS_INTERVAL) * FPS_INTERVAL, FPS_INTERVAL);
+    let numberOfSteps = adjustedDuration / FPS_INTERVAL;
+    return 1 / numberOfSteps;
 }
 
 function requestAnimationFrameShim(ticker: () => void) {

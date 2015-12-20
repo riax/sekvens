@@ -220,14 +220,13 @@ var __extends = (this && this.__extends) || function (d, b) {
             ensurePositiveNumber(duration);
             var currentFraction = 0;
             var initial = this.initialValue;
-            var steps = duration / FPS_INTERVAL;
-            var fraction = 1 / steps;
+            var fraction = calculateFrameFraction(duration);
             var delta = to - this.initialValue;
             this.actions.push(function () {
                 var value = initial + (easing(currentFraction += fraction) * delta);
                 var roundedValue = Math.round(value);
                 return {
-                    isLast: roundedValue === to,
+                    isLast: roundedValue === Math.round(to),
                     value: roundedValue
                 };
             });
@@ -248,8 +247,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             ensurePositiveNumber(duration);
             var currentFraction = 0;
             var initial = this.initialValue;
-            var steps = duration / FPS_INTERVAL;
-            var fraction = 1 / steps;
+            var fraction = calculateFrameFraction(duration);
             var deltaX = to.x - this.initialValue.x;
             var deltaY = to.y - this.initialValue.y;
             this.actions.push(function () {
@@ -258,7 +256,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                 var y = initial.y + (easedFraction * deltaY);
                 var roundedValue = { x: Math.round(x), y: Math.round(y) };
                 return {
-                    isLast: roundedValue.x === to.x && roundedValue.y === to.y,
+                    isLast: roundedValue.x === Math.round(to.x) && roundedValue.y === Math.round(to.y),
                     value: roundedValue
                 };
             });
@@ -268,6 +266,11 @@ var __extends = (this && this.__extends) || function (d, b) {
         return PointValueAnimation;
     })(ValueAnimation);
     exports.PointValueAnimation = PointValueAnimation;
+    function calculateFrameFraction(duration) {
+        var adjustedDuration = Math.max(Math.round(duration / FPS_INTERVAL) * FPS_INTERVAL, FPS_INTERVAL);
+        var numberOfSteps = adjustedDuration / FPS_INTERVAL;
+        return 1 / numberOfSteps;
+    }
     function requestAnimationFrameShim(ticker) {
         return setTimeout(function () {
             ticker();
