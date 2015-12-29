@@ -1,8 +1,7 @@
 {
     "compilerOptions": {
-        "target": "es3",
+        "target": "es6",
         "noImplicitAny": true,
-        "module": "umd",
         "declaration": true
     },
     "compileOnSave": false
