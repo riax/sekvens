@@ -35,65 +35,37 @@ var sekvens;
 
     function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    ;
-    var swing = function swing(t) {
-        return 0.5 - Math.cos(t * Math.PI) / 2;
-    };
-    var linear = function linear(t) {
-        return t;
-    };
-    var easeInQuad = function easeInQuad(t) {
-        return t * t;
-    };
-    var easeOutQuad = function easeOutQuad(t) {
-        return t * (2 - t);
-    };
-    var easeInOutQuad = function easeInOutQuad(t) {
-        return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    };
-    var easeInCubic = function easeInCubic(t) {
-        return t * t * t;
-    };
-    var easeOutCubic = function easeOutCubic(t) {
-        return --t * t * t + 1;
-    };
-    var easeInOutCubic = function easeInOutCubic(t) {
-        return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-    };
-    var easeInQuart = function easeInQuart(t) {
-        return t * t * t * t;
-    };
-    var easeOutQuart = function easeOutQuart(t) {
-        return 1 - --t * t * t * t;
-    };
-    var easeInOutQuart = function easeInOutQuart(t) {
-        return t < .5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
-    };
-    var easeInQuint = function easeInQuint(t) {
-        return t * t * t * t * t;
-    };
-    var easeOutQuint = function easeOutQuint(t) {
-        return 1 + --t * t * t * t * t;
-    };
-    var easeInOutQuint = function easeInOutQuint(t) {
-        return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
-    };
     var FPS_INTERVAL = 1000 / 60;
-    var rAF = window.requestAnimationFrame || requestAnimationFrameShim;
-    function from(value) {
-        ensureInteger(value);
-        return new SingleValueAnimation(value);
-    }
-    function fromPoint(value) {
-        ensurePoint(value);
-        return new PointValueAnimation(value);
-    }
-    function chain() {
-        for (var _len = arguments.length, groups = Array(_len), _key = 0; _key < _len; _key++) {
-            groups[_key] = arguments[_key];
-        }
 
-        return new ChainedAnimation(groups);
+    var rAF = window.requestAnimationFrame || requestAnimationFrameShim;
+    function calculateFrameFraction(duration) {
+        var numberOfSteps = Math.max(snapToFPSInterval(duration), FPS_INTERVAL) / FPS_INTERVAL;
+        return 1 / numberOfSteps;
+    }
+    function snapToFPSInterval(duration) {
+        return Math.round(duration / FPS_INTERVAL) * FPS_INTERVAL;
+    }
+    function requestAnimationFrameShim(ticker) {
+        return setTimeout(function () {
+            ticker();
+        }, FPS_INTERVAL);
+    }
+    function ensurePoint(input) {
+        var isObject = typeof input === "object";
+        if (!isObject || typeof input.x !== "number" || typeof input.y !== "number") throwTypeError("point", isObject ? JSON.stringify(input) : typeof input);
+    }
+    function ensureFunction(input) {
+        if (typeof input !== "function") throwTypeError("function", typeof input);
+    }
+    function ensureInteger(input) {
+        if (typeof input !== "number" || input % 1 !== 0) throwTypeError("integer", input);
+    }
+    function ensurePositiveNumber(input) {
+        ensureInteger(input);
+        if (input < 0) throwTypeError("positive number", input);
+    }
+    function throwTypeError(expected, got) {
+        throw "Expeted " + expected + ", but got " + got;
     }
 
     var AnimationBase = (function () {
@@ -152,57 +124,51 @@ var sekvens;
         return AnimationBase;
     })();
 
-    var ChainedAnimation = (function (_AnimationBase) {
-        _inherits(ChainedAnimation, _AnimationBase);
+    var swing = function swing(t) {
+        return 0.5 - Math.cos(t * Math.PI) / 2;
+    };
+    var linear = function linear(t) {
+        return t;
+    };
+    var easeInQuad = function easeInQuad(t) {
+        return t * t;
+    };
+    var easeOutQuad = function easeOutQuad(t) {
+        return t * (2 - t);
+    };
+    var easeInOutQuad = function easeInOutQuad(t) {
+        return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    };
+    var easeInCubic = function easeInCubic(t) {
+        return t * t * t;
+    };
+    var easeOutCubic = function easeOutCubic(t) {
+        return --t * t * t + 1;
+    };
+    var easeInOutCubic = function easeInOutCubic(t) {
+        return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    };
+    var easeInQuart = function easeInQuart(t) {
+        return t * t * t * t;
+    };
+    var easeOutQuart = function easeOutQuart(t) {
+        return 1 - --t * t * t * t;
+    };
+    var easeInOutQuart = function easeInOutQuart(t) {
+        return t < .5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
+    };
+    var easeInQuint = function easeInQuint(t) {
+        return t * t * t * t * t;
+    };
+    var easeOutQuint = function easeOutQuint(t) {
+        return 1 + --t * t * t * t * t;
+    };
+    var easeInOutQuint = function easeInOutQuint(t) {
+        return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+    };
 
-        function ChainedAnimation(groups) {
-            _classCallCheck(this, ChainedAnimation);
-
-            _get(Object.getPrototypeOf(ChainedAnimation.prototype), "constructor", this).call(this);
-            this.groups = groups;
-            this.currentIndex = 0;
-        }
-
-        _createClass(ChainedAnimation, [{
-            key: "go",
-            value: function go(onGoComplete) {
-                var _this = this;
-
-                onGoComplete && ensureFunction(onGoComplete);
-                var repeatCount = 0;
-                var execute = function execute(index) {
-                    var animation = _this.groups[index];
-                    animation.go(function () {
-                        var nextIndex = index + 1;
-                        var shouldRepeat = repeatCount++ < _this.numberOfRepeats;
-                        if (_this.groups[nextIndex] !== undefined) {
-                            execute(nextIndex);
-                        } else {
-                            if (shouldRepeat) {
-                                execute(0);
-                            } else {
-                                !!onGoComplete && onGoComplete();
-                                _this.executeOnComplete();
-                            }
-                            return;
-                        }
-                    });
-                    _this.currentIndex = index;
-                };
-                this.groups.length > 0 && execute(0);
-            }
-        }, {
-            key: "stop",
-            value: function stop() {
-                this.groups[this.currentIndex].stop();
-            }
-        }]);
-
-        return ChainedAnimation;
-    })(AnimationBase);
-
-    var ValueAnimation = (function (_AnimationBase2) {
-        _inherits(ValueAnimation, _AnimationBase2);
+    var ValueAnimation = (function (_AnimationBase) {
+        _inherits(ValueAnimation, _AnimationBase);
 
         function ValueAnimation(value) {
             _classCallCheck(this, ValueAnimation);
@@ -229,23 +195,23 @@ var sekvens;
         }, {
             key: "go",
             value: function go(onGoComplete) {
-                var _this2 = this;
+                var _this = this;
 
                 onGoComplete && ensureFunction(onGoComplete);
                 var repeatCount = 0;
                 var index = 0;
                 this.sequence = this.sequence || this.createSequence(this.actions);
                 this.startAnimation(function () {
-                    var value = _this2.sequence[index++];
+                    var value = _this.sequence[index++];
                     if (value !== undefined) {
                         if (value !== null) {
-                            _this2.onStepComplete && _this2.onStepComplete(value, _this2);
+                            _this.onStepComplete && _this.onStepComplete(value, _this);
                         }
                     } else {
-                        if (++repeatCount < _this2.numberOfRepeats) {
+                        if (++repeatCount < _this.numberOfRepeats) {
                             index = 0;
                         } else {
-                            _this2.executeOnComplete();
+                            _this.executeOnComplete();
                             !!onGoComplete && onGoComplete();
                             return false;
                         }
@@ -313,11 +279,11 @@ var sekvens;
         }, {
             key: "startAnimation",
             value: function startAnimation(onTick) {
-                var _this3 = this;
+                var _this2 = this;
 
                 this.isTicking = true;
                 var ticker = function ticker() {
-                    if (onTick() && _this3.isTicking) {
+                    if (onTick() && _this2.isTicking) {
                         rAF(ticker);
                     }
                     ;
@@ -411,36 +377,74 @@ var sekvens;
         return PointValueAnimation;
     })(ValueAnimation);
 
-    function calculateFrameFraction(duration) {
-        var numberOfSteps = Math.max(snapToFPSInterval(duration), FPS_INTERVAL) / FPS_INTERVAL;
-        return 1 / numberOfSteps;
+    var ChainedAnimation = (function (_AnimationBase2) {
+        _inherits(ChainedAnimation, _AnimationBase2);
+
+        function ChainedAnimation(groups) {
+            _classCallCheck(this, ChainedAnimation);
+
+            _get(Object.getPrototypeOf(ChainedAnimation.prototype), "constructor", this).call(this);
+            this.groups = groups;
+            this.currentIndex = 0;
+        }
+
+        _createClass(ChainedAnimation, [{
+            key: "go",
+            value: function go(onGoComplete) {
+                var _this3 = this;
+
+                onGoComplete && ensureFunction(onGoComplete);
+                var repeatCount = 0;
+                var execute = function execute(index) {
+                    var animation = _this3.groups[index];
+                    animation.go(function () {
+                        var nextIndex = index + 1;
+                        var shouldRepeat = repeatCount++ < _this3.numberOfRepeats;
+                        if (_this3.groups[nextIndex] !== undefined) {
+                            execute(nextIndex);
+                        } else {
+                            if (shouldRepeat) {
+                                execute(0);
+                            } else {
+                                !!onGoComplete && onGoComplete();
+                                _this3.executeOnComplete();
+                            }
+                            return;
+                        }
+                    });
+                    _this3.currentIndex = index;
+                };
+                this.groups.length > 0 && execute(0);
+            }
+        }, {
+            key: "stop",
+            value: function stop() {
+                this.groups[this.currentIndex].stop();
+            }
+        }]);
+
+        return ChainedAnimation;
+    })(AnimationBase);
+
+    function from(value) {
+        ensureInteger(value);
+        return new SingleValueAnimation(value);
     }
-    function snapToFPSInterval(duration) {
-        return Math.round(duration / FPS_INTERVAL) * FPS_INTERVAL;
+    function fromPoint(value) {
+        ensurePoint(value);
+        return new PointValueAnimation(value);
     }
-    function requestAnimationFrameShim(ticker) {
-        return setTimeout(function () {
-            ticker();
-        }, FPS_INTERVAL);
-    }
-    function ensurePoint(input) {
-        var isObject = typeof input === "object";
-        if (!isObject || typeof input.x !== "number" || typeof input.y !== "number") throwTypeError("point", isObject ? JSON.stringify(input) : typeof input);
-    }
-    function ensureFunction(input) {
-        if (typeof input !== "function") throwTypeError("function", typeof input);
-    }
-    function ensureInteger(input) {
-        if (typeof input !== "number" || input % 1 !== 0) throwTypeError("integer", input);
-    }
-    function ensurePositiveNumber(input) {
-        ensureInteger(input);
-        if (input < 0) throwTypeError("positive number", input);
-    }
-    function throwTypeError(expected, got) {
-        throw "Expeted " + expected + ", but got " + got;
+    function chain() {
+        for (var _len = arguments.length, groups = Array(_len), _key = 0; _key < _len; _key++) {
+            groups[_key] = arguments[_key];
+        }
+
+        return new ChainedAnimation(groups);
     }
 
+    exports.from = from;
+    exports.fromPoint = fromPoint;
+    exports.chain = chain;
     exports.swing = swing;
     exports.linear = linear;
     exports.easeInQuad = easeInQuad;
@@ -455,13 +459,5 @@ var sekvens;
     exports.easeInQuint = easeInQuint;
     exports.easeOutQuint = easeOutQuint;
     exports.easeInOutQuint = easeInOutQuint;
-    exports.from = from;
-    exports.fromPoint = fromPoint;
-    exports.chain = chain;
-    exports.AnimationBase = AnimationBase;
-    exports.ChainedAnimation = ChainedAnimation;
-    exports.ValueAnimation = ValueAnimation;
-    exports.SingleValueAnimation = SingleValueAnimation;
-    exports.PointValueAnimation = PointValueAnimation;
 });
 })();

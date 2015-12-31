@@ -11,6 +11,7 @@ var babel = require("gulp-babel");
 var debug = require("gulp-debug");
 var runSequence = require("gulp-run-sequence");
 var merge = require("merge-stream");
+var replace = require('gulp-replace');
 
 gulp.task("ts", function () {
     return gulp.src("src/**/*.ts")
@@ -20,8 +21,7 @@ gulp.task("ts", function () {
 
 gulp.task("js", function () {
     var js = gulp.src("build/temp/sekvens.js", { read: false })
-        .pipe(rollup({}))
-        .pipe(debug())
+        .pipe(rollup({entry: "./sekvens.js"}))
         .pipe(babel({modules: "umd"}));
 
     var global = js.pipe(clone())
