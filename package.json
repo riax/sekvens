@@ -1,6 +1,7 @@
 {
   "name": "sekvens",
   "version": "0.0.1",
+  "main": "build/sekvens.min.js",
   "licenses": [
     {
       "type": "Apache-2.0",
