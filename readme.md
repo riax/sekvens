@@ -15,6 +15,10 @@ Sekvens is written in TypeScript and works with AMD, CommonJS and in the global 
 bower install sekvens
 ```
 
+``` console
+npm install sekvens
+```
+
 ## Examples
 
 ### Animate from 0 to 1000 in 800 ms and print the result to the console.
