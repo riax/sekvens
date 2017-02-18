@@ -2,6 +2,9 @@
   "name": "sekvens",
   "version": "0.0.2",
   "main": "build/sekvens.min.js",
+  "scripts": {
+    "build": "node ./node_modules/gulp/bin/gulp.js"
+  },
   "licenses": [
     {
       "type": "Apache-2.0",
