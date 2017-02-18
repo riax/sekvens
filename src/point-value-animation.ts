@@ -1,4 +1,4 @@
-import { ensurePoint, ensurePositiveNumber, calculateFrameFraction} from "./helpers";
+import { ensurePoint, ensurePositiveNumber, calculateFrameFraction } from "./helpers";
 import { Point } from "./types";
 import { ValueAnimation } from "./value-animation";
 
