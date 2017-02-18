@@ -3,6 +3,7 @@ import { IAction, ValueAnimationSettings, Command } from "./types";
 import { ensureFunction, ensurePositiveNumber, rAF, snapToFPSInterval } from "./helpers";
 import { AnimationBase, OnStepComplete } from "./animation-base";
 import { easeInOutCubic } from "./easings";
+
 export abstract class ValueAnimation<T> extends AnimationBase {
   protected onStepComplete: OnStepComplete<T>;
   protected sequence: T[] = null;

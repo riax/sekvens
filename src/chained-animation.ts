@@ -1,12 +1,13 @@
 import { ensureFunction } from "./helpers";
-import * as types from "./types";
+import { Command } from "./types";
 import { AnimationBase } from "./animation-base";
+
 export class ChainedAnimation extends AnimationBase {
   private currentIndex = 0;
   constructor(private groups: AnimationBase[]) {
     super();
   }
-  go(onGoComplete?: types.Command) {
+  go(onGoComplete?: Command) {
     onGoComplete && ensureFunction(onGoComplete);
     let repeatCount = 0;
     const execute = (index: number) => {

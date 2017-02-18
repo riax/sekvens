@@ -1,6 +1,8 @@
 import { ensureFunction } from "./helpers";
 import { Command } from "./types";
+
 export type OnStepComplete<T> = (result: T, sekvens: AnimationBase) => void;
+
 export abstract class AnimationBase {
   protected numberOfRepeats = 0;
   private onCompleteCallbacks: Command[] = [];

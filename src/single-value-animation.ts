@@ -1,4 +1,3 @@
-import * as types from "./types";
 import { ensureInteger, ensurePositiveNumber, calculateFrameFraction} from "./helpers";
 import { ValueAnimation } from "./value-animation";
 

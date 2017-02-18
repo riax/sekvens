@@ -1,17 +1,18 @@
-const gulp = require("gulp");
-const concat = require("gulp-concat");
-const uglify = require("gulp-uglify");
-const clean = require("gulp-clean");
-const ts = require("gulp-typescript");
-const tsProject = ts.createProject("./tsconfig.json");
 const addsrc = require("gulp-add-src");
-const clone = require("gulp-clone");
-const rollup = require("gulp-rollup");
 const babel = require("gulp-babel");
+const clean = require("gulp-clean");
+const clone = require("gulp-clone");
+const concat = require("gulp-concat");
 const debug = require("gulp-debug");
-const runSequence = require("gulp-run-sequence");
+const gulp = require("gulp");
 const merge = require("merge-stream");
 const replace = require('gulp-replace');
+const rollup = require("gulp-rollup");
+const runSequence = require("gulp-run-sequence");
+const ts = require("gulp-typescript");
+const uglify = require("gulp-uglify");
+
+const tsProject = ts.createProject("./tsconfig.json");
 
 gulp.task("ts", () => {
   return gulp.src("src/**/*.ts")
