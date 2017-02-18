@@ -14,47 +14,47 @@ var merge = require("merge-stream");
 var replace = require('gulp-replace');
 
 gulp.task("ts", function () {
-    return gulp.src("src/**/*.ts")
-        .pipe(ts(tsProject))
-        .pipe(gulp.dest("build/temp"))
+  return gulp.src("src/**/*.ts")
+    .pipe(ts(tsProject))
+    .pipe(gulp.dest("build/temp"))
 })
 
 gulp.task("js", function () {
-    var js = gulp.src("build/temp/sekvens.js", { read: false })
-        .pipe(rollup({entry: "./sekvens.js"}))
-        .pipe(babel({modules: "umd"}));
+  var js = gulp.src("build/temp/sekvens.js", { read: false })
+    .pipe(rollup({ entry: "./sekvens.js" }))
+    .pipe(babel({ modules: "umd" }));
 
-    var global = js.pipe(clone())
-        .pipe(addsrc.prepend("src/global-wrapper-prefix.js"))
-        .pipe(addsrc.append("src/global-wrapper-suffix.js"))
-        .pipe(concat("."))
-        .pipe(gulp.dest("build/sekvens-global.js"))
-        .pipe(uglify())
-        .pipe(gulp.dest("build/sekvens-global.min.js"));
+  var global = js.pipe(clone())
+    .pipe(addsrc.prepend("src/global-wrapper-prefix.js"))
+    .pipe(addsrc.append("src/global-wrapper-suffix.js"))
+    .pipe(concat("."))
+    .pipe(gulp.dest("build/sekvens-global.js"))
+    .pipe(uglify())
+    .pipe(gulp.dest("build/sekvens-global.min.js"));
 
-    var umd = js.pipe(clone())
-        .pipe(concat("."))
-        .pipe(gulp.dest("build/sekvens.js"))
-        .pipe(uglify())
-        .pipe(gulp.dest("build/sekvens.min.js"));
-        
-    return merge(global, umd);
+  var umd = js.pipe(clone())
+    .pipe(concat("."))
+    .pipe(gulp.dest("build/sekvens.js"))
+    .pipe(uglify())
+    .pipe(gulp.dest("build/sekvens.min.js"));
+
+  return merge(global, umd);
 })
 
 gulp.task("temp-js-clean", function () {
-    return gulp.src("build/temp")
-        .pipe(clean({ force: true }))
+  return gulp.src("build/temp")
+    .pipe(clean({ force: true }))
 })
 
 gulp.task("default", function () {
-    runSequence("ts", "js", "temp-js-clean");
+  runSequence("ts", "js", "temp-js-clean");
 })
 
 gulp.task("watch", function () {
-    gulp.watch("src/**/*.ts", ["default"]);
+  gulp.watch("src/**/*.ts", ["default"]);
 })
 
 gulp.task("clean", function () {
-    return gulp.src("build/**/*")
-        .pipe(clean());
+  return gulp.src("build/**/*")
+    .pipe(clean());
 });

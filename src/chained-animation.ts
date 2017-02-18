@@ -9,11 +9,11 @@ export class ChainedAnimation extends AnimationBase {
   go(onGoComplete?: types.Command) {
     onGoComplete && helpers.ensureFunction(onGoComplete);
     let repeatCount = 0;
-    let execute = (index: number) => {
-      let animation = this.groups[index];
+    const execute = (index: number) => {
+      const animation = this.groups[index];
       animation.go(() => {
-        let nextIndex = index + 1;
-        let shouldRepeat = repeatCount++ < this.numberOfRepeats;
+        const nextIndex = index + 1;
+        const shouldRepeat = repeatCount++ < this.numberOfRepeats;
         if (this.groups[nextIndex] !== undefined) {
           execute(nextIndex);
         } else {

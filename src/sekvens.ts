@@ -8,15 +8,15 @@ import { ChainedAnimation } from "./chained-animation";
 export { swing, linear, easeInQuad, easeOutQuad, easeInOutQuad, easeInCubic, easeOutCubic, easeInOutCubic, easeInQuart, easeOutQuart, easeInOutQuart, easeInQuint, easeOutQuint, easeInOutQuint } from "./easings";
 
 export function from(value: number) {
-    helpers.ensureInteger(value);
-    return new SingleValueAnimation(value);
+  helpers.ensureInteger(value);
+  return new SingleValueAnimation(value);
 }
 
 export function fromPoint(value: types.Point) {
-    helpers.ensurePoint(value);
-    return new PointValueAnimation(value);
+  helpers.ensurePoint(value);
+  return new PointValueAnimation(value);
 }
 
 export function chain(...groups: AnimationBase[]) {
-    return new ChainedAnimation(groups);
+  return new ChainedAnimation(groups);
 }

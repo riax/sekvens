@@ -6,11 +6,11 @@ export abstract class AnimationBase {
   private onCompleteCallbacks: types.Command[] = [];
   abstract stop(): void;
   abstract go(onDone?: types.Command): void;
-  repeat(count: number = Number.MAX_VALUE) : AnimationBase {
+  repeat(count: number = Number.MAX_VALUE): AnimationBase {
     this.numberOfRepeats = count;
     return this;
   }
-  done(onComplete: types.Command) : AnimationBase {
+  done(onComplete: types.Command): AnimationBase {
     onComplete && helpers.ensureFunction(onComplete);
     this.onCompleteCallbacks.push(onComplete);
     return this;

@@ -5,19 +5,19 @@ import { AnimationBase, OnStepComplete } from "./animation-base";
 import { easeInOutCubic } from "./easings";
 export abstract class ValueAnimation<T> extends AnimationBase {
   protected onStepComplete: OnStepComplete<T>;
-  protected sequence: T[] = null;  
+  protected sequence: T[] = null;
   protected actions: types.IAction<T>[] = [];
   protected initialValue: T;
   protected valueAnimationSettings: types.ValueAnimationSettings = { defaultEasing: easeInOutCubic };
   private isTicking: boolean;
-  constructor(value: T){
+  constructor(value: T) {
     super();
-    this.initialValue = value; 
+    this.initialValue = value;
   }
   stop() {
     this.stopAnimation();
   }
-  on(onStepComplete: OnStepComplete<T>) : ValueAnimation<T> {
+  on(onStepComplete: OnStepComplete<T>): ValueAnimation<T> {
     helpers.ensureFunction(onStepComplete);
     this.onStepComplete = onStepComplete;
     return this;
@@ -28,7 +28,7 @@ export abstract class ValueAnimation<T> extends AnimationBase {
     let index = 0;
     this.sequence = this.sequence || this.createSequence(this.actions);
     this.startAnimation(() => {
-      let value = this.sequence[index++]
+      const value = this.sequence[index++]
       if (value !== undefined) {
         if (value !== null) {
           this.onStepComplete && this.onStepComplete(value, this);
@@ -45,14 +45,14 @@ export abstract class ValueAnimation<T> extends AnimationBase {
       return true;
     });
   }
-  settings(settings: types.ValueAnimationSettings) : ValueAnimation<T> {
+  settings(settings: types.ValueAnimationSettings): ValueAnimation<T> {
     this.valueAnimationSettings.defaultEasing = settings.defaultEasing;
     return this;
   }
-  wait(duration: number) : ValueAnimation<T> {
+  wait(duration: number): ValueAnimation<T> {
     helpers.ensurePositiveNumber(duration);
-    let numberOfSteps = helpers.snapToFPSInterval(duration) / constants.FPS_INTERVAL;
-    if(numberOfSteps === 0) return this;
+    const numberOfSteps = helpers.snapToFPSInterval(duration) / constants.FPS_INTERVAL;
+    if (numberOfSteps === 0) return this;
     let stepCount = 0;
     this.actions.push(() => {
       return {
@@ -62,12 +62,12 @@ export abstract class ValueAnimation<T> extends AnimationBase {
     });
     return this;
   }
-    protected createSequence(actions: types.IAction<T>[]) {
-    let values: T[] = [];
-    for (let action of actions) {
+  protected createSequence(actions: types.IAction<T>[]) {
+    const values: T[] = [];
+    for (const action of actions) {
       let isLast: boolean;
       do {
-        let result = action()
+        const result = action()
         values.push(result.value);
         isLast = result.isLast;
       } while (!isLast)
@@ -76,8 +76,8 @@ export abstract class ValueAnimation<T> extends AnimationBase {
   }
   protected startAnimation(onTick: () => boolean) {
     this.isTicking = true;
-    let ticker = () => {
-      if(onTick() && this.isTicking){
+    const ticker = () => {
+      if (onTick() && this.isTicking) {
         helpers.rAF(ticker);
       };
     };

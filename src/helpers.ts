@@ -1,15 +1,15 @@
 import * as types from "./types";
-import {FPS_INTERVAL} from "./constants";
+import { FPS_INTERVAL } from "./constants";
 
 export let rAF = window.requestAnimationFrame || requestAnimationFrameShim;
 
-export function calculateFrameFraction(duration: number){
-    let numberOfSteps = Math.max(snapToFPSInterval(duration), FPS_INTERVAL) / FPS_INTERVAL;
-    return 1 / numberOfSteps;
+export function calculateFrameFraction(duration: number) {
+  let numberOfSteps = Math.max(snapToFPSInterval(duration), FPS_INTERVAL) / FPS_INTERVAL;
+  return 1 / numberOfSteps;
 }
 
-export function snapToFPSInterval(duration: number){
-    return Math.round(duration / FPS_INTERVAL) * FPS_INTERVAL;
+export function snapToFPSInterval(duration: number) {
+  return Math.round(duration / FPS_INTERVAL) * FPS_INTERVAL;
 }
 
 export function requestAnimationFrameShim(ticker: () => void) {
