@@ -1,9 +1,9 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "noImplicitAny": true,
-        "declaration": true,
-        "allowJs": true
-    },
-    "compileOnSave": false
+  "compilerOptions": {
+    "target": "es6",
+    "noImplicitAny": true,
+    "declaration": true,
+    "allowJs": true
+  },
+  "compileOnSave": false
 }

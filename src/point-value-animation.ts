@@ -1,20 +1,20 @@
-import * as helpers from "./helpers";
-import * as types from "./types";
+import { ensurePoint, ensurePositiveNumber, calculateFrameFraction} from "./helpers";
+import { Point } from "./types";
 import { ValueAnimation } from "./value-animation";
 
-export class PointValueAnimation extends ValueAnimation<types.Point>{
-  constructor(value: types.Point) {
+export class PointValueAnimation extends ValueAnimation<Point>{
+  constructor(value: Point) {
     super(value);
   }
-  to(to: types.Point, duration: number, easing = this.valueAnimationSettings.defaultEasing): PointValueAnimation {
-    helpers.ensurePoint(to);
-    helpers.ensurePositiveNumber(duration);
+  to(to: Point, duration: number, easing = this.valueAnimationSettings.defaultEasing): PointValueAnimation {
+    ensurePoint(to);
+    ensurePositiveNumber(duration);
     const deltaX = to.x - this.initialValue.x;
     const deltaY = to.y - this.initialValue.y;
     if (deltaX === 0 && deltaY === 0) return this;
     let currentFraction = 0;
     const initial = this.initialValue;
-    const fraction = helpers.calculateFrameFraction(duration);
+    const fraction = calculateFrameFraction(duration);
     this.actions.push(() => {
       const easedFraction = easing(currentFraction += fraction);
       const x = initial.x + (easedFraction * deltaX)

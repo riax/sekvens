@@ -1,4 +1,4 @@
-import * as helpers from "./helpers";
+import { ensureFunction } from "./helpers";
 import * as types from "./types";
 import { AnimationBase } from "./animation-base";
 export class ChainedAnimation extends AnimationBase {
@@ -7,7 +7,7 @@ export class ChainedAnimation extends AnimationBase {
     super();
   }
   go(onGoComplete?: types.Command) {
-    onGoComplete && helpers.ensureFunction(onGoComplete);
+    onGoComplete && ensureFunction(onGoComplete);
     let repeatCount = 0;
     const execute = (index: number) => {
       const animation = this.groups[index];

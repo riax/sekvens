@@ -9,7 +9,7 @@ end_of_line = lf
 insert_final_newline = true
 
 # Set default charset and indentation style
-[*.{ts,js, css, html}]
+[*.{ts,js,css,html,json}]
 charset = utf-8
 indent_style = space
 indent_size = 2

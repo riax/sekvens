@@ -1,6 +1,6 @@
-import * as helpers from "./helpers";
 import * as types from "./types";
 import * as constants from "./constants";
+import { ensureInteger, ensurePoint } from "./helpers";
 import { AnimationBase } from "./animation-base";
 import { SingleValueAnimation } from "./single-value-animation";
 import { PointValueAnimation } from "./point-value-animation";
@@ -8,12 +8,12 @@ import { ChainedAnimation } from "./chained-animation";
 export { swing, linear, easeInQuad, easeOutQuad, easeInOutQuad, easeInCubic, easeOutCubic, easeInOutCubic, easeInQuart, easeOutQuart, easeInOutQuart, easeInQuint, easeOutQuint, easeInOutQuint } from "./easings";
 
 export function from(value: number) {
-  helpers.ensureInteger(value);
+  ensureInteger(value);
   return new SingleValueAnimation(value);
 }
 
 export function fromPoint(value: types.Point) {
-  helpers.ensurePoint(value);
+  ensurePoint(value);
   return new PointValueAnimation(value);
 }
 

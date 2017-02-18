@@ -1,5 +1,5 @@
-import * as helpers from "./helpers";
 import * as types from "./types";
+import { ensureInteger, ensurePositiveNumber, calculateFrameFraction} from "./helpers";
 import { ValueAnimation } from "./value-animation";
 
 export class SingleValueAnimation extends ValueAnimation<number> {
@@ -7,13 +7,13 @@ export class SingleValueAnimation extends ValueAnimation<number> {
     super(value);
   }
   to(to: number, duration: number, easing = this.valueAnimationSettings.defaultEasing) : SingleValueAnimation {
-    helpers.ensureInteger(to);
-    helpers.ensurePositiveNumber(duration);
+    ensureInteger(to);
+    ensurePositiveNumber(duration);
     const delta = to - this.initialValue;
     if(delta === 0) return this;
     let currentFraction = 0;
     const initial = this.initialValue;
-    const fraction = helpers.calculateFrameFraction(duration);
+    const fraction = calculateFrameFraction(duration);
     this.actions.push(() => {
       const value = initial + (easing(currentFraction += fraction) * delta)
       const roundedValue = Math.round(value);
