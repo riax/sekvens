@@ -3,11 +3,11 @@ Sekvens is a basic ~6k (~2k gzipped) JavaScript animation library that has no DO
 
 Sekvens is written in TypeScript and works with AMD, CommonJS and in the global namespace. TypeScript definition file is included.
 
-[Basic examples ](http://riax.se/sekvens/examples/basic.html)
+[Basic examples ](http://sekvens.riax.se/examples/basic.html)
 
-[Advanced examples ](http://riax.se/sekvens/examples/advanced.html)
+[Advanced examples ](http://sekvens.riax.se/examples/advanced.html)
 
-[2D examples ](http://riax.se/sekvens/examples/point.html)
+[2D examples ](http://sekvens.riax.se/examples/point.html)
 
 [Codepen example ](http://codepen.io/anon/pen/KVVPEy)
 
@@ -17,18 +17,18 @@ bower install sekvens
 
 ## Examples
 
-### Animate from 0 to 1000 in 800 ms and print the result to the console. 
+### Animate from 0 to 1000 in 800 ms and print the result to the console.
 ```javascript
 var duration = 800;
 sekvens.from(0)
   .to(1000, duration)
   .on(function (value) {
-    /* 
+    /*
       Use the "on" function to change the state of your animation. "On" will execute on every frame.
       E.g in ReactJS you will do setState({ whatEver: value }) or in KnockoutJS change
       an observable like whatEverObservable(value).
     */
-    console.log(value); // prints 1,2,5,8 ... 999,100  
+    console.log(value); // prints 1,2,5,8 ... 999,100
   }).go();
 ```
 
@@ -44,7 +44,7 @@ sekvens.from(0)
   }).go();
 ```
 
-### Use of to(), wait() multiple times to build an animation sequence. Repeat will repeat the sequence. 
+### Use of to(), wait() multiple times to build an animation sequence. Repeat will repeat the sequence.
 ```javascript
 sekvens.from(0)
   .to(200, 250)
@@ -74,7 +74,7 @@ var move = sekvens.from(0)
 
 var innerChain = sekvens.chain(move, move);
 sekvens.chain(innerChain, move) // Nested chaining
-       .repeat(10).go(); 
+       .repeat(10).go();
 ```
 ### Easings can be applied as an argument to the to() function. "easeInOutCubic" is the default if no argument is specified.
 ```javascript
@@ -124,7 +124,7 @@ sekvens.from(0)
   .go();
 ```
 
-## Setup 
+## Setup
 ### Global namespace
 Just reference sekvens-global.js or sekvens-global.min.js and use the global variable "sekvens".
 ```html
