@@ -1,7 +1,6 @@
 {
   "name": "sekvens",
   "version": "0.0.1",
-  "dependencies": {},
   "licenses": [
     {
       "type": "Apache-2.0",
@@ -16,6 +15,7 @@
     "node": ">=0.8.0"
   },
   "devDependencies": {
+    "gulp-replace": "^0.5.4",
     "babel-plugin-transform-es2015-modules-umd": "^6.3.13",
     "babel-preset-es2015": "^6.3.13",
     "gulp": "^3.9.0",
